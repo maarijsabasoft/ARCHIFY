@@ -29,6 +29,7 @@ module.exports = (env, self) => {
       open: true,
       port: port,
       contentBase: path.join(__dirname, './dist'),
+      historyApiFallback: true,  // Enable client-side routing - all routes serve index.html
     },
     resolve: {
       extensions: ['.js', '.jsx'],

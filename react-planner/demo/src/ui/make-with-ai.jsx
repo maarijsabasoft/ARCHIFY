@@ -1,7 +1,32 @@
 import React from 'react';
 
-const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
+const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [messages, setMessages] = React.useState([
+    {
+      role: 'assistant',
+      content: "Hello! I'm your AI design assistant. I'll help you create your perfect floor plan. Let's start by understanding your needs. What type of space are you looking to design? (e.g., apartment, house, office, studio)"
+    }
+  ]);
+  const [inputValue, setInputValue] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [sessionId, setSessionId] = React.useState(null);
+  const [generatedDesign, setGeneratedDesign] = React.useState(null);
+  const messagesEndRef = React.useRef(null);
+  const chatContainerRef = React.useRef(null);
+
+  const API_BASE_URL = 'http://localhost:5000/api';
+
+  // Scroll to bottom of messages within the chat container only
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  };
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // Scroll handler for navbar
   React.useEffect(() => {
@@ -11,6 +36,157 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Send message to backend
+  const sendMessage = function(message) {
+    if (!message.trim()) return;
+
+    // Add user message to UI
+    setMessages(function(prev) { return [...prev, { role: 'user', content: message }]; });
+    setInputValue('');
+    setIsLoading(true);
+
+    fetch(API_BASE_URL + '/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        message: message
+      })
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      console.log('API Response:', data);
+      if (data.success) {
+        setSessionId(data.session_id);
+        setMessages(function(prev) { return [...prev, { role: 'assistant', content: data.message }]; });
+        
+        if (data.is_design && data.design) {
+          console.log('Design detected! Setting generatedDesign state.');
+          setGeneratedDesign(data.design);
+          // Add confirmation message
+          setMessages(function(prev) { return [...prev, { 
+            role: 'assistant', 
+            content: '✅ Floor plan generated successfully! Click the green "Load Design in Editor" button below to open it in the planner.' 
+          }]; });
+        }
+      } else {
+        console.error('API Error:', data.error);
+        setMessages(function(prev) { return [...prev, { 
+          role: 'assistant', 
+          content: 'Sorry, I encountered an error: ' + (data.error || 'Unknown error') 
+        }]; });
+      }
+      setIsLoading(false);
+    })
+    .catch(function(error) {
+      console.error('Error sending message:', error);
+      setMessages(function(prev) { return [...prev, { 
+        role: 'assistant', 
+        content: 'Sorry, I could not connect to the server. Please make sure the backend is running.' 
+      }]; });
+      setIsLoading(false);
+    });
+  };
+
+  // Generate design
+  const generateDesign = function() {
+    if (!sessionId) {
+      setMessages(function(prev) { return [...prev, { 
+        role: 'assistant', 
+        content: 'Please describe your design requirements first before generating.' 
+      }]; });
+      return;
+    }
+
+    setIsLoading(true);
+    setMessages(function(prev) { return [...prev, { 
+      role: 'user', 
+      content: 'Generate my floor plan design now.' 
+    }]; });
+
+    fetch(API_BASE_URL + '/generate-design', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        session_id: sessionId
+      })
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      if (data.success && data.design) {
+        setGeneratedDesign(data.design);
+        setMessages(function(prev) { return [...prev, { 
+          role: 'assistant', 
+          content: 'I\'ve generated your floor plan design! Click "Load Design in Editor" to view and edit it in the planner.' 
+        }]; });
+      } else {
+        setMessages(function(prev) { return [...prev, { 
+          role: 'assistant', 
+          content: 'Sorry, I couldn\'t generate the design. ' + (data.error || 'Please try again.')
+        }]; });
+      }
+      setIsLoading(false);
+    })
+    .catch(function(error) {
+      console.error('Error generating design:', error);
+      setMessages(function(prev) { return [...prev, { 
+        role: 'assistant', 
+        content: 'Sorry, I could not connect to the server. Please make sure the backend is running.' 
+      }]; });
+      setIsLoading(false);
+    });
+  };
+
+  // Reset conversation
+  const resetConversation = function() {
+    if (sessionId) {
+      fetch(API_BASE_URL + '/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ session_id: sessionId })
+      }).catch(function(error) {
+        console.error('Error resetting:', error);
+      });
+    }
+
+    setSessionId(null);
+    setGeneratedDesign(null);
+    setMessages([{
+      role: 'assistant',
+      content: "Hello! I'm your AI design assistant. I'll help you create your perfect floor plan. Let's start by understanding your needs. What type of space are you looking to design? (e.g., apartment, house, office, studio)"
+    }]);
+  };
+
+  // Load design into editor
+  const loadDesignInEditor = () => {
+    if (generatedDesign) {
+      // Store design in localStorage as backup
+      localStorage.setItem('ai-generated-design', JSON.stringify(generatedDesign));
+      
+      if (onLoadDesign) {
+        // Use the callback to load design directly
+        onLoadDesign(generatedDesign);
+      } else {
+        // Fallback: navigate to tool
+        onStartFromScratch();
+      }
+    }
+  };
+
+  // Handle key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(inputValue);
+    }
+  };
 
   // AI Logo Component
   const AILogo = () => (
@@ -242,13 +418,6 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
               fontWeight: 500,
               transition: 'color 0.3s ease',
               cursor: 'pointer'
-            }}>Features</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 500,
-              transition: 'color 0.3s ease',
-              cursor: 'pointer'
             }}>Login</a>
             <button onClick={(e) => { e.preventDefault(); }} style={{
               padding: '12px 30px',
@@ -331,7 +500,12 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
               marginTop: '-10px'
             }}>
               <button
-                onClick={onStartFromScratch}
+                onClick={() => {
+                  const chatSection = document.getElementById('chat-section');
+                  if (chatSection) {
+                    chatSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 style={{
                   padding: '15px 35px',
                   fontSize: '1rem',
@@ -532,7 +706,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
       </section>
 
       {/* Chatbot Interface Section */}
-      <section style={{
+      <section id="chat-section" style={{
         padding: '100px 20px',
         background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
         color: '#333'
@@ -552,7 +726,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
             maxWidth: '700px',
             margin: '0 auto 60px'
           }} className="fade-in-up">
-            Chat with our AI assistant to get personalized design recommendations and help with your architectural projects
+            Chat with our AI assistant to design your perfect floor plan. Describe your space and let AI create it for you!
           </p>
 
           <div style={{
@@ -570,137 +744,193 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
-              gap: '15px'
+              justifyContent: 'space-between'
             }}>
-              <div style={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '50%',
-                background: 'rgba(255,255,255,0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1.5rem'
-              }}>
-                🤖
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <div style={{
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.5rem'
+                }}>
+                  🤖
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.3rem' }}>Archify AI Assistant</h3>
+                  <p style={{ margin: 0, opacity: 0.9, fontSize: '0.9rem' }}>
+                    {isLoading ? 'Thinking...' : 'Online • Ready to help with your designs'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.3rem' }}>Archify AI Assistant</h3>
-                <p style={{ margin: 0, opacity: 0.9, fontSize: '0.9rem' }}>Online • Ready to help with your designs</p>
-              </div>
+              <button
+                onClick={resetConversation}
+                style={{
+                  padding: '8px 16px',
+                  background: 'rgba(255,255,255,0.2)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                }}
+              >
+                New Chat
+              </button>
             </div>
 
             {/* Chat Messages */}
-            <div style={{
-              height: '400px',
-              padding: '30px',
-              overflowY: 'auto',
-              background: '#fafafa'
-            }}>
-              <div style={{
-                display: 'flex',
-                marginBottom: '20px',
-                alignItems: 'flex-start',
-                gap: '15px'
+            <div 
+              ref={chatContainerRef}
+              style={{
+                height: '400px',
+                padding: '30px',
+                overflowY: 'auto',
+                background: '#fafafa'
               }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              {messages.map((msg, idx) => (
+                <div key={idx} style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  flexShrink: 0
+                  marginBottom: '20px',
+                  justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                  alignItems: 'flex-start',
+                  gap: '15px'
                 }}>
-                  🤖
+                  {msg.role === 'assistant' && (
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.2rem',
+                      flexShrink: 0
+                    }}>
+                      🤖
+                    </div>
+                  )}
+                  <div style={{
+                    background: msg.role === 'user' 
+                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                      : '#ffffff',
+                    padding: '15px 20px',
+                    borderRadius: msg.role === 'user' 
+                      ? '18px 18px 5px 18px' 
+                      : '18px 18px 18px 5px',
+                    boxShadow: msg.role === 'user' 
+                      ? '0 2px 10px rgba(102, 126, 234, 0.3)' 
+                      : '0 2px 10px rgba(0,0,0,0.1)',
+                    maxWidth: '70%',
+                    color: msg.role === 'user' ? '#ffffff' : '#333'
+                  }}>
+                    <p style={{ margin: 0, lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+                      {msg.content}
+                    </p>
+                  </div>
+                  {msg.role === 'user' && (
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.2rem',
+                      flexShrink: 0
+                    }}>
+                      👤
+                    </div>
+                  )}
                 </div>
+              ))}
+              {isLoading && (
                 <div style={{
-                  background: '#ffffff',
-                  padding: '15px 20px',
-                  borderRadius: '18px 18px 18px 5px',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                  maxWidth: '70%'
-                }}>
-                  <p style={{ margin: 0, color: '#333', lineHeight: '1.4' }}>
-                    Hello! I'm your AI design assistant. I can help you create amazing architectural designs.
-                    Try asking me about specific design styles, room layouts, or building types!
-                  </p>
-                </div>
-              </div>
-
-              <div style={{
-                display: 'flex',
-                marginBottom: '20px',
-                justifyContent: 'flex-end',
-                alignItems: 'flex-start',
-                gap: '15px'
-              }}>
-                <div style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  padding: '15px 20px',
-                  borderRadius: '18px 18px 5px 18px',
-                  boxShadow: '0 2px 10px rgba(102, 126, 234, 0.3)',
-                  maxWidth: '70%',
-                  color: '#ffffff'
-                }}>
-                  <p style={{ margin: 0, lineHeight: '1.4' }}>
-                    I need help designing a modern kitchen for a small apartment
-                  </p>
-                </div>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  flexShrink: 0
+                  marginBottom: '20px',
+                  alignItems: 'flex-start',
+                  gap: '15px'
                 }}>
-                  👤
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.2rem',
+                    flexShrink: 0
+                  }}>
+                    🤖
+                  </div>
+                  <div style={{
+                    background: '#ffffff',
+                    padding: '15px 20px',
+                    borderRadius: '18px 18px 18px 5px',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                  }}>
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                      <span style={{ animation: 'pulse 1s infinite', animationDelay: '0s' }}>●</span>
+                      <span style={{ animation: 'pulse 1s infinite', animationDelay: '0.2s' }}>●</span>
+                      <span style={{ animation: 'pulse 1s infinite', animationDelay: '0.4s' }}>●</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div style={{
-                display: 'flex',
-                marginBottom: '20px',
-                alignItems: 'flex-start',
-                gap: '15px'
-              }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  flexShrink: 0
-                }}>
-                  🤖
-                </div>
-                <div style={{
-                  background: '#ffffff',
-                  padding: '15px 20px',
-                  borderRadius: '18px 18px 18px 5px',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                  maxWidth: '70%'
-                }}>
-                  <p style={{ margin: 0, color: '#333', lineHeight: '1.4' }}>
-                    For a small apartment kitchen, I'd recommend a compact L-shaped layout with:
-                    • Space-saving appliances (slimline fridge, under-counter oven)
-                    • Pull-out pantry storage
-                    • Peninsula countertop for additional workspace
-                    • Light-colored cabinets to make the space feel larger
-                    Would you like me to generate a detailed floorplan for this?
-                  </p>
-                </div>
-              </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
+
+            {/* Generated Design Actions */}
+            {generatedDesign && (
+              <div style={{
+                padding: '15px 30px',
+                background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '15px'
+              }}>
+                <span style={{ color: '#ffffff', fontWeight: 'bold' }}>
+                  ✓ Design Generated Successfully!
+                </span>
+                <button
+                  onClick={loadDesignInEditor}
+                  style={{
+                    padding: '10px 25px',
+                    background: '#ffffff',
+                    color: '#4CAF50',
+                    border: 'none',
+                    borderRadius: '25px',
+                    fontSize: '0.95rem',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
+                >
+                  Load Design in Editor
+                </button>
+              </div>
+            )}
 
             {/* Chat Input */}
             <div style={{
@@ -713,7 +943,11 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
             }}>
               <input
                 type="text"
-                placeholder="Ask me about your design ideas..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Describe your space requirements..."
+                disabled={isLoading}
                 style={{
                   flex: 1,
                   padding: '15px 20px',
@@ -722,31 +956,39 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
                   fontSize: '1rem',
                   outline: 'none',
                   transition: 'border-color 0.3s ease',
-                  background: '#fafafa'
+                  background: isLoading ? '#f5f5f5' : '#fafafa',
+                  opacity: isLoading ? 0.7 : 1
                 }}
                 onFocus={(e) => e.currentTarget.style.borderColor = '#667eea'}
                 onBlur={(e) => e.currentTarget.style.borderColor = '#e9ecef'}
               />
-              <button style={{
-                padding: '15px 25px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '25px',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
-              }}
+              <button 
+                onClick={() => sendMessage(inputValue)}
+                disabled={isLoading || !inputValue.trim()}
+                style={{
+                  padding: '15px 25px',
+                  background: isLoading || !inputValue.trim() 
+                    ? '#cccccc' 
+                    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '25px',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  cursor: isLoading || !inputValue.trim() ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isLoading && inputValue.trim()) {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+                }}
               >
                 Send
               </button>
@@ -762,29 +1004,36 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch }) => {
               flexWrap: 'wrap'
             }}>
               {[
-                'Modern kitchen layout',
-                'Scandinavian living room',
-                'Home office design',
-                'Small apartment optimization'
+                'Design a modern 2-bedroom apartment',
+                'Create a small studio with kitchen',
+                'Design an open-plan living room',
+                'Create a home office space'
               ].map((suggestion, idx) => (
-                <button key={idx} style={{
-                  padding: '8px 16px',
-                  background: 'rgba(102, 126, 234, 0.1)',
-                  color: '#667eea',
-                  border: '1px solid rgba(102, 126, 234, 0.2)',
-                  borderRadius: '20px',
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(102, 126, 234, 0.2)';
-                  e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(102, 126, 234, 0.1)';
-                  e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.2)';
-                }}
+                <button 
+                  key={idx} 
+                  onClick={() => sendMessage(suggestion)}
+                  disabled={isLoading}
+                  style={{
+                    padding: '8px 16px',
+                    background: 'rgba(102, 126, 234, 0.1)',
+                    color: '#667eea',
+                    border: '1px solid rgba(102, 126, 234, 0.2)',
+                    borderRadius: '20px',
+                    fontSize: '0.85rem',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    opacity: isLoading ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isLoading) {
+                      e.currentTarget.style.background = 'rgba(102, 126, 234, 0.2)';
+                      e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.4)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(102, 126, 234, 0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.2)';
+                  }}
                 >
                   {suggestion}
                 </button>

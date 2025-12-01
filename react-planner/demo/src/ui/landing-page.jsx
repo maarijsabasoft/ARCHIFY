@@ -1,6 +1,8 @@
 import React from 'react';
+import { UserMenu, useAuth } from './auth-modals';
 
 const LandingPage = ({ onGetStarted, onShowAI }) => {
+  const auth = useAuth();
   const [isHoveredScratch, setIsHoveredScratch] = React.useState(false);
   const [isHoveredAI, setIsHoveredAI] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -292,36 +294,46 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
               transition: 'color 0.3s ease',
               cursor: 'pointer'
             }}>Features</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 500,
-              transition: 'color 0.3s ease',
-              cursor: 'pointer'
-            }}>Login</a>
-            <button onClick={(e) => { e.preventDefault(); }} style={{
-              padding: '12px 30px',
-              background: '#ffffff',
-              color: '#667eea',
-              border: '2px solid #ffffff',
-              borderRadius: '25px',
-              fontWeight: 'bold',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(255,255,255,0.3)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,255,255,0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.background = '#ffffff';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(255,255,255,0.3)';
-            }}
-            >Signup</button>
+            
+            {/* Auth Buttons */}
+            {auth.user ? (
+              <UserMenu />
+            ) : (
+              <React.Fragment>
+                <button onClick={function() { auth.setShowLoginModal(true); }} style={{
+                  color: isScrolled ? '#333' : '#ffffff',
+                  background: 'transparent',
+                  border: 'none',
+                  fontWeight: 500,
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  transition: 'color 0.3s ease'
+                }}>Sign In</button>
+                <button onClick={function() { auth.setShowSignupModal(true); }} style={{
+                  padding: '12px 30px',
+                  background: '#ffffff',
+                  color: '#667eea',
+                  border: '2px solid #ffffff',
+                  borderRadius: '25px',
+                  fontWeight: 'bold',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 15px rgba(255,255,255,0.3)',
+                }}
+                onMouseEnter={function(e) {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,255,255,0.5)';
+                }}
+                onMouseLeave={function(e) {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.background = '#ffffff';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(255,255,255,0.3)';
+                }}
+                >Sign Up</button>
+              </React.Fragment>
+            )}
           </div>
         </div>
       </nav>
@@ -493,8 +505,8 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
         </div>
       </section>
 
-      {/* Demo Section */}
-      <section style={{
+      {/* Tutorial Section */}
+      <section id="tutorials" style={{
         padding: '100px 20px',
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         color: '#ffffff'
@@ -503,7 +515,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
           <h2 style={{
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             marginBottom: '20px'
-          }} className="fade-in-down">See It In Action</h2>
+          }} className="fade-in-down">📺 Video Tutorial</h2>
           <p style={{
             fontSize: '1.2rem',
             marginBottom: '50px',
@@ -511,34 +523,98 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
             maxWidth: '700px',
             margin: '0 auto 50px'
           }} className="fade-in-up">
-            Watch how easy it is to create professional floorplans and visualize them in 3D
+            Watch this quick tutorial to learn how to create professional floorplans with Archify
           </p>
           <div style={{
             background: 'rgba(255,255,255,0.1)',
-            borderRadius: '20px',
-            padding: '40px',
+            borderRadius: '24px',
+            padding: '24px',
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255,255,255,0.2)'
+            border: '1px solid rgba(255,255,255,0.2)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
           }} className="fade-in-up">
             <div style={{
-              width: '100%',
-              height: '400px',
-              background: 'rgba(255,255,255,0.2)',
-              borderRadius: '15px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.5rem',
-              border: '2px dashed rgba(255,255,255,0.3)'
+              position: 'relative',
+              paddingBottom: '53.125%',
+              height: 0,
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.3)'
             }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎬</div>
-                <p>Interactive Demo Preview</p>
-                <p style={{ fontSize: '1rem', marginTop: '10px', opacity: 0.8 }}>
-                  Click "Start from scratch" to try it yourself!
-                </p>
-              </div>
+              <iframe 
+                src="https://www.loom.com/embed/fbb86c21c5f7441bacfb062310b4c8c7?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" 
+                frameBorder="0" 
+                webkitallowfullscreen="true"
+                mozallowfullscreen="true"
+                allowFullScreen={true}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 'none'
+                }}
+              />
             </div>
+          </div>
+          <div style={{
+            marginTop: '40px',
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '20px',
+            flexWrap: 'wrap'
+          }}>
+            <button
+              onClick={onGetStarted}
+              style={{
+                padding: '16px 40px',
+                fontSize: '1.1rem',
+                fontWeight: 'bold',
+                color: '#667eea',
+                backgroundColor: '#ffffff',
+                border: 'none',
+                borderRadius: '50px',
+                cursor: 'pointer',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={function(e) {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 12px 35px rgba(0,0,0,0.3)';
+              }}
+              onMouseLeave={function(e) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.2)';
+              }}
+            >
+              Try It Yourself →
+            </button>
+            <button
+              onClick={onShowAI}
+              style={{
+                padding: '16px 40px',
+                fontSize: '1.1rem',
+                fontWeight: 'bold',
+                color: '#ffffff',
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                border: '2px solid rgba(255,255,255,0.5)',
+                borderRadius: '50px',
+                cursor: 'pointer',
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={function(e) {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.3)';
+              }}
+              onMouseLeave={function(e) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)';
+              }}
+            >
+              🤖 Make with AI
+            </button>
           </div>
         </div>
       </section>
