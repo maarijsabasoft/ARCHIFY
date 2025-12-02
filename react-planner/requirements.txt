@@ -10,3 +10,4 @@ PyJWT==2.8.0
 google-auth==2.25.2
 google-auth-oauthlib==1.2.0
 requests==2.31.0
+stripe==12.5.1

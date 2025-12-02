@@ -11,8 +11,10 @@ import MyCatalog from './catalog/mycatalog';
 import ToolbarScreenshotButton from './ui/toolbar-screenshot-button';
 import LandingPage from './ui/landing-page';
 import MakeWithAI from './ui/make-with-ai';
+import Header, { AILogo } from './ui/header';
 import { AuthProvider, LoginModal, SignupModal, VerificationModal, ForgotPasswordModal, ResetPasswordModal, UserMenu } from './ui/auth-modals';
 import { TourProvider, TourOverlay, WelcomeTourModal, TourHelpButton } from './ui/product-tour';
+import { SubscriptionProvider, PricingSection, AccountPage } from './ui/subscription';
 
 import {
   Models as PlannerModels,
@@ -90,10 +92,14 @@ class App extends React.Component {
       initialView = 'tool';
     } else if (path === '/planner' || path.endsWith('/planner')) {
       initialView = 'planner';
+    } else if (path === '/pricing' || path.endsWith('/pricing')) {
+      initialView = 'pricing';
+    } else if (path === '/account' || path.endsWith('/account')) {
+      initialView = 'account';
     }
     
     this.state = {
-      currentView: initialView, // 'landing', 'ai', 'planner', 'tool'
+      currentView: initialView, // 'landing', 'ai', 'planner', 'tool', 'pricing', 'account'
       aiGeneratedDesign: null
     };
     this.handleGetStarted = this.handleGetStarted.bind(this);
@@ -101,6 +107,8 @@ class App extends React.Component {
     this.handleShowAI = this.handleShowAI.bind(this);
     this.handleOpenTool = this.handleOpenTool.bind(this);
     this.handleLoadDesign = this.handleLoadDesign.bind(this);
+    this.handleShowPricing = this.handleShowPricing.bind(this);
+    this.handleShowAccount = this.handleShowAccount.bind(this);
   }
 
   componentDidMount() {
@@ -145,6 +153,10 @@ class App extends React.Component {
         this.setState({ currentView: 'tool' });
       } else if (path === '/planner' || path.endsWith('/planner')) {
         this.setState({ currentView: 'planner' });
+      } else if (path === '/pricing' || path.endsWith('/pricing')) {
+        this.setState({ currentView: 'pricing' });
+      } else if (path === '/account' || path.endsWith('/account')) {
+        this.setState({ currentView: 'account' });
       } else {
         this.setState({ currentView: 'landing' });
       }
@@ -178,6 +190,16 @@ class App extends React.Component {
     window.history.pushState({}, '', '/tool');
   }
 
+  handleShowPricing() {
+    window.history.pushState({}, '', '/pricing');
+    this.setState({ currentView: 'pricing' });
+  }
+
+  handleShowAccount() {
+    window.history.pushState({}, '', '/account');
+    this.setState({ currentView: 'account' });
+  }
+
   render() {
     if (this.state.currentView === 'landing') {
       return <LandingPage onGetStarted={this.handleGetStarted} onShowAI={this.handleShowAI} />;
@@ -191,35 +213,43 @@ class App extends React.Component {
       />;
     }
 
-    if (this.state.currentView === 'planner') {
-      // AI Logo Component
-    const AILogo = () => (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="aiGradientTool" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#667eea" />
-            <stop offset="100%" stopColor="#764ba2" />
-          </linearGradient>
-        </defs>
-        <circle cx="20" cy="20" r="18" fill="url(#aiGradientTool)" opacity="0.9"/>
-        <circle cx="15" cy="15" r="3" fill="#ffffff"/>
-        <circle cx="25" cy="15" r="3" fill="#ffffff"/>
-        <circle cx="20" cy="20" r="3" fill="#ffffff"/>
-        <circle cx="15" cy="25" r="3" fill="#ffffff"/>
-        <circle cx="25" cy="25" r="3" fill="#ffffff"/>
-        <line x1="15" y1="15" x2="20" y2="20" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-        <line x1="25" y1="15" x2="20" y2="20" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-        <line x1="20" y1="20" x2="15" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-        <line x1="20" y1="20" x2="25" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-        <line x1="15" y1="15" x2="25" y2="15" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
-        <line x1="15" y1="25" x2="25" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
-        <circle cx="12" cy="12" r="1.5" fill="#ffffff" opacity="0.8"/>
-        <circle cx="28" cy="12" r="1.5" fill="#ffffff" opacity="0.8"/>
-        <circle cx="12" cy="28" r="1.5" fill="#ffffff" opacity="0.8"/>
-        <circle cx="28" cy="28" r="1.5" fill="#ffffff" opacity="0.8"/>
-      </svg>
-    );
+    if (this.state.currentView === 'pricing') {
+      return (
+        <div>
+          <Header 
+            onBackToHome={this.handleBackToHome}
+            onShowAI={this.handleShowAI}
+            onStartFromScratch={this.handleGetStarted}
+            currentPage="pricing"
+            isScrolled={true}
+            isFixed={true}
+          />
+          <div style={{ paddingTop: '80px' }}>
+            <PricingSection onClose={this.handleBackToHome} />
+          </div>
+        </div>
+      );
+    }
 
+    if (this.state.currentView === 'account') {
+      return (
+        <div>
+          <Header 
+            onBackToHome={this.handleBackToHome}
+            onShowAI={this.handleShowAI}
+            onStartFromScratch={this.handleGetStarted}
+            currentPage="account"
+            isScrolled={true}
+            isFixed={true}
+          />
+          <div style={{ paddingTop: '80px' }}>
+            <AccountPage onBackToHome={this.handleBackToHome} />
+          </div>
+        </div>
+      );
+    }
+
+    if (this.state.currentView === 'planner') {
     // Architecture Animation Component
     const ArchitectureAnimation = () => {
       const [animationPhase, setAnimationPhase] = React.useState(0);
@@ -394,96 +424,14 @@ class App extends React.Component {
           }
         `}</style>
         {/* Navbar */}
-        <nav style={{
-          width: '100%',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 2px 20px rgba(0,0,0,0.2)',
-          padding: '20px 40px',
-          zIndex: 1000
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <div style={{
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              cursor: 'pointer',
-              transition: 'opacity 0.3s ease'
-            }}
-            onClick={this.handleBackToHome}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              <div style={{
-                width: '40px',
-                height: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <AILogo />
-              </div>
-              <span>Archify</span>
-            </div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '30px'
-            }}>
-              <a href="#" onClick={(e) => { e.preventDefault(); this.handleShowAI(); }} style={{
-                color: '#ffffff',
-                textDecoration: 'none',
-                fontWeight: 500,
-                transition: 'opacity 0.3s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-              >Make with AI</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); }} style={{
-                color: '#ffffff',
-                textDecoration: 'none',
-                fontWeight: 500,
-                transition: 'opacity 0.3s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-              >Login</a>
-              <button onClick={(e) => { e.preventDefault(); }} style={{
-                padding: '12px 30px',
-                background: '#ffffff',
-                color: '#667eea',
-                border: '2px solid #ffffff',
-                borderRadius: '25px',
-                fontWeight: 'bold',
-                fontSize: '1rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 15px rgba(255,255,255,0.3)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,255,255,0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.background = '#ffffff';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255,255,255,0.3)';
-              }}
-              >Signup</button>
-            </div>
-          </div>
-        </nav>
+        <Header 
+          onBackToHome={this.handleBackToHome}
+          onShowAI={this.handleShowAI}
+          onStartFromScratch={this.handleOpenTool}
+          currentPage="planner"
+          isScrolled={false}
+          isFixed={false}
+        />
         
         {/* Hero Banner */}
         <section style={{
@@ -1008,12 +956,14 @@ class App extends React.Component {
 //render
 ReactDOM.render(
   <AuthProvider>
-    <App />
-    <LoginModal />
-    <SignupModal />
-    <VerificationModal />
-    <ForgotPasswordModal />
-    <ResetPasswordModal />
+    <SubscriptionProvider>
+      <App />
+      <LoginModal />
+      <SignupModal />
+      <VerificationModal />
+      <ForgotPasswordModal />
+      <ResetPasswordModal />
+    </SubscriptionProvider>
   </AuthProvider>,
   document.getElementById('app')
 );

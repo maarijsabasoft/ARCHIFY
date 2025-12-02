@@ -1,8 +1,34 @@
 import React from 'react';
-import { UserMenu, useAuth } from './auth-modals';
+import Header, { AILogo } from './header';
+import { useSubscription } from './subscription';
+import { useAuth } from './auth-modals';
 
 const LandingPage = ({ onGetStarted, onShowAI }) => {
-  const auth = useAuth();
+  var auth = useAuth();
+  var subscriptionContext = useSubscription();
+  var createCheckoutSession = subscriptionContext.createCheckoutSession;
+  var subscription = subscriptionContext.subscription;
+  var [checkoutLoading, setCheckoutLoading] = React.useState(null);
+
+  var handlePlanClick = function(planName) {
+    if (planName === 'Free') {
+      onGetStarted();
+      return;
+    }
+    
+    // Both Pro and Enterprise redirect to Stripe checkout
+    setCheckoutLoading(planName);
+    var plan = planName.toLowerCase();
+    
+    createCheckoutSession(plan, 'monthly')
+      .then(function() {
+        setCheckoutLoading(null);
+      })
+      .catch(function(error) {
+        alert('Failed to start checkout: ' + error.message);
+        setCheckoutLoading(null);
+      });
+  };
   const [isHoveredScratch, setIsHoveredScratch] = React.useState(false);
   const [isHoveredAI, setIsHoveredAI] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -15,38 +41,6 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // AI Logo Component
-  const AILogo = () => (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Neural Network / Brain-inspired design */}
-      <defs>
-        <linearGradient id="aiGradientLanding" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#667eea" />
-          <stop offset="100%" stopColor="#764ba2" />
-        </linearGradient>
-      </defs>
-      <circle cx="20" cy="20" r="18" fill="url(#aiGradientLanding)" opacity="0.9"/>
-      {/* Neural nodes */}
-      <circle cx="15" cy="15" r="3" fill="#ffffff"/>
-      <circle cx="25" cy="15" r="3" fill="#ffffff"/>
-      <circle cx="20" cy="20" r="3" fill="#ffffff"/>
-      <circle cx="15" cy="25" r="3" fill="#ffffff"/>
-      <circle cx="25" cy="25" r="3" fill="#ffffff"/>
-      {/* Neural connections */}
-      <line x1="15" y1="15" x2="20" y2="20" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="25" y1="15" x2="20" y2="20" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="20" y1="20" x2="15" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="20" y1="20" x2="25" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="15" y1="15" x2="25" y2="15" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
-      <line x1="15" y1="25" x2="25" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
-      {/* Sparkle effect */}
-      <circle cx="12" cy="12" r="1.5" fill="#ffffff" opacity="0.8"/>
-      <circle cx="28" cy="12" r="1.5" fill="#ffffff" opacity="0.8"/>
-      <circle cx="12" cy="28" r="1.5" fill="#ffffff" opacity="0.8"/>
-      <circle cx="28" cy="28" r="1.5" fill="#ffffff" opacity="0.8"/>
-    </svg>
-  );
 
   // Architecture Animation Component
   const ArchitectureAnimation = () => {
@@ -229,114 +223,15 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
       `}</style>
 
       {/* Navbar */}
-      <nav style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        background: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
-        backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-        boxShadow: isScrolled ? '0 2px 20px rgba(0,0,0,0.1)' : 'none',
-        transition: 'all 0.3s ease',
-        padding: '20px 40px'
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: isScrolled ? '#667eea' : '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            transition: 'color 0.3s ease'
-          }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <AILogo />
-            </div>
-            <span>Archify</span>
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '30px'
-          }}>
-            <a href="#" onClick={(e) => { e.preventDefault(); onShowAI(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 500,
-              transition: 'color 0.3s ease',
-              cursor: 'pointer'
-            }}>Make with AI</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); onGetStarted(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 500,
-              transition: 'color 0.3s ease',
-              cursor: 'pointer'
-            }}>Start from scratch</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); scrollToFeatures(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 500,
-              transition: 'color 0.3s ease',
-              cursor: 'pointer'
-            }}>Features</a>
-            
-            {/* Auth Buttons */}
-            {auth.user ? (
-              <UserMenu />
-            ) : (
-              <React.Fragment>
-                <button onClick={function() { auth.setShowLoginModal(true); }} style={{
-                  color: isScrolled ? '#333' : '#ffffff',
-                  background: 'transparent',
-                  border: 'none',
-                  fontWeight: 500,
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  transition: 'color 0.3s ease'
-                }}>Sign In</button>
-                <button onClick={function() { auth.setShowSignupModal(true); }} style={{
-                  padding: '12px 30px',
-                  background: '#ffffff',
-                  color: '#667eea',
-                  border: '2px solid #ffffff',
-                  borderRadius: '25px',
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 15px rgba(255,255,255,0.3)',
-                }}
-                onMouseEnter={function(e) {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,255,255,0.5)';
-                }}
-                onMouseLeave={function(e) {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.background = '#ffffff';
-                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(255,255,255,0.3)';
-                }}
-                >Sign Up</button>
-              </React.Fragment>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Header 
+        onBackToHome={() => {}}
+        onShowAI={onShowAI}
+        onStartFromScratch={onGetStarted}
+        onScrollToFeatures={scrollToFeatures}
+        currentPage="landing"
+        isScrolled={isScrolled}
+        isFixed={true}
+      />
 
       {/* Hero Section */}
       <section style={{
@@ -650,10 +545,14 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
             margin: '0 auto'
           }}>
             {[
-              { name: 'Free', price: '$0', features: ['Basic 2D design', 'Limited objects', 'Community support'] },
-              { name: 'Pro', price: '$29', features: ['Full 2D & 3D', 'Unlimited objects', 'Export options', 'Priority support'], popular: true },
-              { name: 'Enterprise', price: 'Custom', features: ['Everything in Pro', 'Team collaboration', 'API access', 'Dedicated support'] }
-            ].map((plan, idx) => (
+              { name: 'Free', price: '$0', features: ['Basic 2D design', 'Limited objects', 'Community support'], buttonText: 'Get Started' },
+              { name: 'Pro', price: '$29', features: ['Full 2D & 3D', 'Unlimited objects', 'Export options', 'Priority support'], popular: true, buttonText: 'Upgrade to Pro' },
+              { name: 'Enterprise', price: 'Custom', features: ['Everything in Pro', 'Team collaboration', 'API access', 'Dedicated support'], buttonText: 'Contact Sales' }
+            ].map(function(plan, idx) {
+              var isCurrentPlan = subscription && subscription.plan === plan.name.toLowerCase();
+              var isLoading = checkoutLoading === plan.name;
+              
+              return (
               <div key={idx} style={{
                 background: plan.popular ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ffffff',
                 color: plan.popular ? '#ffffff' : '#333',
@@ -664,9 +563,9 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
                 transition: 'transform 0.3s ease',
                 position: 'relative'
               }}
-              className={`fade-in-delay-${idx + 1}`}
-              onMouseEnter={(e) => e.currentTarget.style.transform = plan.popular ? 'scale(1.08)' : 'scale(1.05)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = plan.popular ? 'scale(1.05)' : 'scale(1)'}
+              className={'fade-in-delay-' + (idx + 1)}
+              onMouseEnter={function(e) { e.currentTarget.style.transform = plan.popular ? 'scale(1.08)' : 'scale(1.05)'; }}
+              onMouseLeave={function(e) { e.currentTarget.style.transform = plan.popular ? 'scale(1.05)' : 'scale(1)'; }}
               >
                 {plan.popular && (
                   <div style={{
@@ -688,17 +587,19 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
                   {plan.price !== 'Custom' && <span style={{ fontSize: '1rem' }}>/mo</span>}
                 </div>
                 <ul style={{ listStyle: 'none', padding: 0, marginBottom: '30px' }}>
-                  {plan.features.map((feature, fIdx) => (
+                  {plan.features.map(function(feature, fIdx) {
+                    return (
                     <li key={fIdx} style={{
                       padding: '10px 0',
-                      borderBottom: `1px solid ${plan.popular ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`
+                      borderBottom: '1px solid ' + (plan.popular ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)')
                     }}>
                       ✓ {feature}
                     </li>
-                  ))}
+                  );})}
                 </ul>
                 <button
-                  onClick={plan.name === 'Free' ? onGetStarted : () => {}}
+                  onClick={function() { handlePlanClick(plan.name); }}
+                  disabled={isCurrentPlan || isLoading}
                   style={{
                     width: '100%',
                     padding: '15px',
@@ -706,24 +607,27 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
                     fontWeight: 'bold',
                     border: 'none',
                     borderRadius: '10px',
-                    cursor: 'pointer',
+                    cursor: isCurrentPlan ? 'default' : 'pointer',
                     background: plan.popular ? '#ffffff' : '#667eea',
                     color: plan.popular ? '#667eea' : '#ffffff',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    opacity: isLoading ? 0.7 : 1
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+                  onMouseEnter={function(e) {
+                    if (!isCurrentPlan) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+                    }
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={function(e) {
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  {plan.name === 'Free' ? 'Get Started' : 'Contact Sales'}
+                  {isLoading ? 'Processing...' : (isCurrentPlan ? 'Current Plan' : plan.buttonText)}
                 </button>
               </div>
-            ))}
+            );})}
           </div>
         </div>
       </section>

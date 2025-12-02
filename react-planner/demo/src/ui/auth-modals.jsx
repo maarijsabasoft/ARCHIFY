@@ -2,8 +2,9 @@ import React from 'react';
 
 const API_BASE_URL = 'http://localhost:5000/api/auth';
 
-// Google Client ID
-const GOOGLE_CLIENT_ID = '836571438073-09ml50l2hccddj99mbsqc2dtbg3h8l6b.apps.googleusercontent.com';
+// Google Client ID (from Google Cloud Console)
+// Make sure this matches the "Client ID" under your Web application OAuth client.
+const GOOGLE_CLIENT_ID = '836571438073-g4foa0u929gskfrqhbi7q7omrl7pif2t.apps.googleusercontent.com';
 
 // Load Google Sign-In script
 var googleScriptLoaded = false;

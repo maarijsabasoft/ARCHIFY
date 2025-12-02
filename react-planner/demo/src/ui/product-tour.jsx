@@ -1,107 +1,86 @@
 import React from 'react';
 
-// Tour steps configuration - targeting sidebar buttons
+// Tour steps configuration - targeting main toolbar buttons (top/left bar)
 var TOUR_STEPS = [
   {
     title: 'Welcome to Archify',
-    description: 'This is your design workspace. Let me show you the tools on the left sidebar.',
+    description: 'This is your design workspace. Let me show you the main toolbar tools one by one.',
     position: 'center',
     icon: '🎨'
   },
   {
-    title: '2D View',
-    description: 'View and edit your floor plan from above in 2D mode.',
+    title: 'New Project',
+    description: 'Start a brand new project. Be sure to save your work before creating a new one.',
     buttonIndex: 0,
     position: 'right',
-    icon: '📐'
-  },
-  {
-    title: '3D View',
-    description: 'See a realistic 3D preview of your design.',
-    buttonIndex: 1,
-    position: 'right',
-    icon: '🏠'
-  },
-  {
-    title: 'Catalog',
-    description: 'Browse furniture, doors, windows and more to add to your design.',
-    buttonIndex: 2,
-    position: 'right',
-    icon: '📦'
-  },
-  {
-    title: 'Draw Wall',
-    description: 'Click to start drawing walls. Click again to place corners.',
-    buttonIndex: 3,
-    position: 'right',
-    icon: '🧱'
-  },
-  {
-    title: 'Add Door/Window',
-    description: 'Add doors and windows to your walls.',
-    buttonIndex: 4,
-    position: 'right',
-    icon: '🚪'
-  },
-  {
-    title: 'Add Furniture',
-    description: 'Place furniture and items from the catalog.',
-    buttonIndex: 5,
-    position: 'right',
-    icon: '🪑'
-  },
-  {
-    title: 'Select Tool',
-    description: 'Select and move elements in your design.',
-    buttonIndex: 6,
-    position: 'right',
-    icon: '👆'
-  },
-  {
-    title: 'Pan View',
-    description: 'Click and drag to move around your design.',
-    buttonIndex: 7,
-    position: 'right',
-    icon: '🔍'
-  },
-  {
-    title: 'Zoom In',
-    description: 'Zoom in for detailed work.',
-    buttonIndex: 8,
-    position: 'right',
-    icon: '🔎'
-  },
-  {
-    title: 'Zoom Out',
-    description: 'Zoom out to see the full design.',
-    buttonIndex: 9,
-    position: 'right',
-    icon: '🔍'
-  },
-  {
-    title: 'Undo',
-    description: 'Undo your last action.',
-    buttonIndex: 10,
-    position: 'right',
-    icon: '↩️'
-  },
-  {
-    title: 'Project Settings',
-    description: 'Configure project dimensions and settings.',
-    buttonIndex: 11,
-    position: 'right',
-    icon: '⚙️'
+    icon: '📄'
   },
   {
     title: 'Save Project',
-    description: 'Save your design to continue later.',
-    buttonIndex: 12,
+    description: 'Save your current design so you can open it again later.',
+    buttonIndex: 1,
     position: 'right',
     icon: '💾'
   },
   {
+    title: 'Load Project',
+    description: 'Open a design you previously saved from your computer.',
+    buttonIndex: 2,
+    position: 'right',
+    icon: '📂'
+  },
+  {
+    title: 'Open Catalog',
+    description: 'Browse the catalog to add furniture, doors, windows and more to your plan.',
+    buttonIndex: 3,
+    position: 'right',
+    icon: '📦'
+  },
+  {
+    title: '3D View',
+    description: 'Switch to 3D view to see a realistic preview of your design.',
+    buttonIndex: 4,
+    position: 'right',
+    icon: '🏠'
+  },
+  {
+    title: '2D View',
+    description: 'Go back to the 2D view where you draw and edit your floor plan.',
+    buttonIndex: 5,
+    position: 'right',
+    icon: '📐'
+  },
+  {
+    title: '3D First Person',
+    description: 'Walk through your design in first-person mode to experience the space.',
+    buttonIndex: 6,
+    position: 'right',
+    icon: '🚶'
+  },
+  {
+    title: 'Undo',
+    description: 'Undo your last action if you make a mistake.',
+    buttonIndex: 7,
+    position: 'right',
+    icon: '↩️'
+  },
+  {
+    title: 'Configure Project',
+    description: 'Change project settings like units, grid and other preferences.',
+    buttonIndex: 8,
+    position: 'right',
+    icon: '⚙️'
+  },
+  {
+    title: 'Get Screenshot',
+    description: 'Capture a high-quality image of your plan to share or download.',
+    buttonIndex: 9,
+    position: 'right',
+    icon: '📸'
+  },
+  {
     title: 'You\'re Ready!',
-    description: 'Start designing! Click the help button anytime to see this tour again.',
+    description: 'You\'re ready to design! Click the help button anytime to see this tour again.',
     position: 'center',
     icon: '🎉'
   }
@@ -212,9 +191,9 @@ export function TourOverlay() {
         return;
       }
 
-      // Find sidebar buttons
-      var sidebar = document.querySelector('[class*="sidebar"]');
-      if (!sidebar) {
+      // Find main toolbar (where project actions and view icons are)
+      var toolbar = document.querySelector('.toolbar') || document.querySelector('[class*="toolbar"]');
+      if (!toolbar) {
         setTargetRect(null);
         setTooltipPosition({
           x: window.innerWidth / 2 - 180,
@@ -223,8 +202,8 @@ export function TourOverlay() {
         return;
       }
 
-      // Get all clickable elements in sidebar (the tool buttons)
-      var buttons = sidebar.querySelectorAll('div[style*="cursor: pointer"], div[style*="cursor:pointer"]');
+      // Get all clickable elements in toolbar (the tool buttons)
+      var buttons = toolbar.querySelectorAll('div[style*="cursor: pointer"], div[style*="cursor:pointer"]');
       
       if (step.buttonIndex !== undefined && buttons.length > step.buttonIndex) {
         var target = buttons[step.buttonIndex];

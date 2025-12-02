@@ -1,4 +1,5 @@
 import React from 'react';
+import Header, { AILogo } from './header';
 
 const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -188,34 +189,6 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
     }
   };
 
-  // AI Logo Component
-  const AILogo = () => (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="aiGradientAI" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#667eea" />
-          <stop offset="100%" stopColor="#764ba2" />
-        </linearGradient>
-      </defs>
-      <circle cx="20" cy="20" r="18" fill="url(#aiGradientAI)" opacity="0.9"/>
-      <circle cx="15" cy="15" r="3" fill="#ffffff"/>
-      <circle cx="25" cy="15" r="3" fill="#ffffff"/>
-      <circle cx="20" cy="20" r="3" fill="#ffffff"/>
-      <circle cx="15" cy="25" r="3" fill="#ffffff"/>
-      <circle cx="25" cy="25" r="3" fill="#ffffff"/>
-      <line x1="15" y1="15" x2="20" y2="20" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="25" y1="15" x2="20" y2="20" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="20" y1="20" x2="15" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="20" y1="20" x2="25" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.7"/>
-      <line x1="15" y1="15" x2="25" y2="15" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
-      <line x1="15" y1="25" x2="25" y2="25" stroke="#ffffff" strokeWidth="1.5" opacity="0.5"/>
-      <circle cx="12" cy="12" r="1.5" fill="#ffffff" opacity="0.8"/>
-      <circle cx="28" cy="12" r="1.5" fill="#ffffff" opacity="0.8"/>
-      <circle cx="12" cy="28" r="1.5" fill="#ffffff" opacity="0.8"/>
-      <circle cx="28" cy="28" r="1.5" fill="#ffffff" opacity="0.8"/>
-    </svg>
-  );
-
   // AI Architecture Animation Component
   const AIArchitectureAnimation = () => {
     const [animationPhase, setAnimationPhase] = React.useState(0);
@@ -347,104 +320,14 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
       `}</style>
 
       {/* Navbar */}
-      <nav style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        background: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
-        backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-        boxShadow: isScrolled ? '0 2px 20px rgba(0,0,0,0.1)' : 'none',
-        transition: 'all 0.3s ease',
-        padding: '20px 40px'
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: isScrolled ? '#667eea' : '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            transition: 'color 0.3s ease',
-            cursor: 'pointer'
-          }}
-          onClick={onBackToHome}
-          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-          >
-            <div style={{
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <AILogo />
-            </div>
-            <span>Archify</span>
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '30px'
-          }}>
-            <a href="#" onClick={(e) => { e.preventDefault(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 'bold',
-              transition: 'color 0.3s ease',
-              cursor: 'pointer',
-              borderBottom: '2px solid #ffffff',
-              paddingBottom: '5px'
-            }}>Make with AI</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); onStartFromScratch(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 500,
-              transition: 'color 0.3s ease',
-              cursor: 'pointer'
-            }}>Start from scratch</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); }} style={{
-              color: isScrolled ? '#333' : '#ffffff',
-              textDecoration: 'none',
-              fontWeight: 500,
-              transition: 'color 0.3s ease',
-              cursor: 'pointer'
-            }}>Login</a>
-            <button onClick={(e) => { e.preventDefault(); }} style={{
-              padding: '12px 30px',
-              background: '#ffffff',
-              color: '#667eea',
-              border: '2px solid #ffffff',
-              borderRadius: '25px',
-              fontWeight: 'bold',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(255,255,255,0.3)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,255,255,0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.background = '#ffffff';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(255,255,255,0.3)';
-            }}
-            >Signup</button>
-          </div>
-        </div>
-      </nav>
+      <Header 
+        onBackToHome={onBackToHome}
+        onShowAI={() => {}}
+        onStartFromScratch={onStartFromScratch}
+        currentPage="ai"
+        isScrolled={isScrolled}
+        isFixed={true}
+      />
 
       {/* Hero Section */}
       <section style={{
