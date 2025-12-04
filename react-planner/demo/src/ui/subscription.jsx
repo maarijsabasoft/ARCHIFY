@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAuth } from './auth-modals';
+import { useAuth } from './auth-modals.jsx';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://archify.mirdemy.com/api';
 
 // Subscription Context
 const SubscriptionContext = React.createContext(null);
@@ -297,7 +297,7 @@ export const PricingSection = ({ onClose }) => {
           textAlign: 'center',
           fontSize: 'clamp(2rem, 4vw, 3rem)',
           marginBottom: '20px',
-          color: '#667eea'
+          color: '#4a5568'
         }}>Choose Your Plan</h2>
         
         <p style={{
@@ -320,7 +320,7 @@ export const PricingSection = ({ onClose }) => {
           marginBottom: '50px'
         }}>
           <span style={{ 
-            color: billingPeriod === 'monthly' ? '#667eea' : '#666',
+            color: billingPeriod === 'monthly' ? '#4a5568' : '#666',
             fontWeight: billingPeriod === 'monthly' ? 'bold' : 'normal'
           }}>Monthly</span>
           <button
@@ -329,7 +329,7 @@ export const PricingSection = ({ onClose }) => {
               width: '60px',
               height: '30px',
               borderRadius: '15px',
-              background: billingPeriod === 'yearly' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ddd',
+              background: billingPeriod === 'yearly' ? 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)' : '#ddd',
               border: 'none',
               cursor: 'pointer',
               position: 'relative',
@@ -349,7 +349,7 @@ export const PricingSection = ({ onClose }) => {
             }} />
           </button>
           <span style={{ 
-            color: billingPeriod === 'yearly' ? '#667eea' : '#666',
+            color: billingPeriod === 'yearly' ? '#4a5568' : '#666',
             fontWeight: billingPeriod === 'yearly' ? 'bold' : 'normal'
           }}>
             Yearly <span style={{ color: '#43e97b', fontSize: '0.9rem' }}>(Save 17%)</span>
@@ -372,7 +372,7 @@ export const PricingSection = ({ onClose }) => {
               <div 
                 key={plan.id}
                 style={{
-                  background: plan.popular ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ffffff',
+                  background: plan.popular ? 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)' : '#ffffff',
                   color: plan.popular ? '#ffffff' : '#333',
                   padding: '40px 30px',
                   borderRadius: '20px',
@@ -462,10 +462,10 @@ export const PricingSection = ({ onClose }) => {
                     cursor: isCurrentPlan ? 'default' : 'pointer',
                     background: isCurrentPlan 
                       ? (plan.popular ? 'rgba(255,255,255,0.3)' : '#e9ecef')
-                      : (plan.popular ? '#ffffff' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'),
+                      : (plan.popular ? '#ffffff' : 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)'),
                     color: isCurrentPlan
                       ? (plan.popular ? '#fff' : '#666')
-                      : (plan.popular ? '#667eea' : '#ffffff'),
+                      : (plan.popular ? '#4a5568' : '#ffffff'),
                     transition: 'all 0.3s ease',
                     opacity: loading === plan.id ? 0.7 : 1
                   }}
@@ -522,7 +522,7 @@ export const PricingSection = ({ onClose }) => {
                 borderRadius: '15px',
                 boxShadow: '0 5px 15px rgba(0,0,0,0.05)'
               }}>
-                <h4 style={{ color: '#667eea', marginBottom: '10px' }}>{faq.q}</h4>
+                <h4 style={{ color: '#4a5568', marginBottom: '10px' }}>{faq.q}</h4>
                 <p style={{ color: '#666', lineHeight: '1.6', margin: 0 }}>{faq.a}</p>
               </div>
             ))}
@@ -542,7 +542,7 @@ export const SubscriptionBadge = ({ style }) => {
   const plan = subscription.plan || 'free';
   const colors = {
     free: { bg: '#e9ecef', text: '#666' },
-    pro: { bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', text: '#fff' },
+    pro: { bg: 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)', text: '#fff' },
     enterprise: { bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', text: '#fff' }
   };
 
@@ -604,7 +604,7 @@ export const UpgradePrompt = ({ feature, onClose }) => {
         <div style={{
           width: '80px',
           height: '80px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
@@ -644,7 +644,7 @@ export const UpgradePrompt = ({ feature, onClose }) => {
             disabled={loading}
             style={{
               padding: '12px 25px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)',
               color: '#fff',
               border: 'none',
               borderRadius: '10px',
@@ -728,7 +728,7 @@ export const AccountPage = ({ onBackToHome }) => {
           style={{
             marginTop: '20px',
             padding: '15px 30px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)',
             color: '#fff',
             border: 'none',
             borderRadius: '10px',
@@ -754,7 +754,7 @@ export const AccountPage = ({ onBackToHome }) => {
           style={{
             background: 'none',
             border: 'none',
-            color: '#667eea',
+            color: '#4a5568',
             fontSize: '1rem',
             cursor: 'pointer',
             marginBottom: '20px',
@@ -782,7 +782,7 @@ export const AccountPage = ({ onBackToHome }) => {
               width: '80px',
               height: '80px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -853,7 +853,7 @@ export const AccountPage = ({ onBackToHome }) => {
                       onClick={openCustomerPortal}
                       style={{
                         padding: '12px 25px',
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        background: 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)',
                         color: '#fff',
                         border: 'none',
                         borderRadius: '10px',
@@ -907,7 +907,7 @@ export const AccountPage = ({ onBackToHome }) => {
                     onClick={() => window.location.href = '/#pricing'}
                     style={{
                       padding: '12px 25px',
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #4a5568 0%, #764ba2 100%)',
                       color: '#fff',
                       border: 'none',
                       borderRadius: '10px',

@@ -14,7 +14,7 @@ import jwt
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:9001')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://archify.mirdemy.com')
 SECRET_KEY = os.environ.get('SECRET_KEY', 'archify-secret-key-change-in-production')
 
 # Import db from auth module

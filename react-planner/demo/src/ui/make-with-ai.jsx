@@ -16,7 +16,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
   const messagesEndRef = React.useRef(null);
   const chatContainerRef = React.useRef(null);
 
-  const API_BASE_URL = 'http://localhost:5000/api';
+  const API_BASE_URL = 'https://archify.mirdemy.com/api';
 
   // Scroll to bottom of messages within the chat container only
   const scrollToBottom = () => {
@@ -335,7 +335,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff',
         padding: '120px 20px 40px',
         position: 'relative',
@@ -393,7 +393,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                   padding: '15px 35px',
                   fontSize: '1rem',
                   fontWeight: 'bold',
-                  color: '#667eea',
+                  color: '#4a5568',
                   backgroundColor: '#ffffff',
                   border: 'none',
                   borderRadius: '50px',
@@ -474,7 +474,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
             textAlign: 'center',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             marginBottom: '20px',
-            color: '#667eea'
+                    color: '#4a5568'
           }} className="fade-in-down">AI Architecture Prompts</h2>
           <p style={{
             textAlign: 'center',
@@ -562,7 +562,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
               >
                 <div style={{ textAlign: 'center', marginBottom: '15px' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>{category.icon}</div>
-                  <h3 style={{ fontSize: '1.2rem', color: '#667eea', margin: 0, fontWeight: 'bold' }}>{category.category}</h3>
+                  <h3 style={{ fontSize: '1.2rem', color: '#4a5568', margin: 0, fontWeight: 'bold' }}>{category.category}</h3>
                 </div>
                 <ul style={{ listStyle: 'none', padding: 0 }}>
                   {category.prompts.map((prompt, pIdx) => (
@@ -575,7 +575,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                       cursor: 'pointer',
                       transition: 'color 0.3s ease'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = '#667eea'}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#4a5568'}
                     onMouseLeave={(e) => e.currentTarget.style.color = '#555'}
                     >
                       {prompt}
@@ -599,7 +599,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
             textAlign: 'center',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             marginBottom: '20px',
-            color: '#667eea'
+                    color: '#4a5568'
           }} className="fade-in-down">AI Design Assistant</h2>
           <p style={{
             textAlign: 'center',
@@ -622,7 +622,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
           }}>
             {/* Chat Header */}
             <div style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
               padding: '20px 30px',
               color: '#ffffff',
               display: 'flex',
@@ -694,7 +694,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                       width: '40px',
                       height: '40px',
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -706,7 +706,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                   )}
                   <div style={{
                     background: msg.role === 'user' 
-                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                      ? 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)' 
                       : '#ffffff',
                     padding: '15px 20px',
                     borderRadius: msg.role === 'user' 
@@ -750,7 +750,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                     width: '40px',
                     height: '40px',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -842,7 +842,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                   background: isLoading ? '#f5f5f5' : '#fafafa',
                   opacity: isLoading ? 0.7 : 1
                 }}
-                onFocus={(e) => e.currentTarget.style.borderColor = '#667eea'}
+                onFocus={(e) => e.currentTarget.style.borderColor = '#4a5568'}
                 onBlur={(e) => e.currentTarget.style.borderColor = '#e9ecef'}
               />
               <button 
@@ -852,7 +852,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                   padding: '15px 25px',
                   background: isLoading || !inputValue.trim() 
                     ? '#cccccc' 
-                    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    : 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '25px',
@@ -898,8 +898,8 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                   disabled={isLoading}
                   style={{
                     padding: '8px 16px',
-                    background: 'rgba(102, 126, 234, 0.1)',
-                    color: '#667eea',
+                    background: 'rgba(74, 85, 104, 0.1)',
+                    color: '#4a5568',
                     border: '1px solid rgba(102, 126, 234, 0.2)',
                     borderRadius: '20px',
                     fontSize: '0.85rem',
@@ -929,7 +929,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
       {/* How It Works Section */}
       <section style={{
         padding: '100px 20px',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
@@ -974,7 +974,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
                   width: '60px',
                   height: '60px',
                   background: '#ffffff',
-                  color: '#667eea',
+                  color: '#4a5568',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
@@ -997,7 +997,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
       {/* CTA Section */}
       <section style={{
         padding: '100px 20px',
-        background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff',
         textAlign: 'center'
       }}>
@@ -1005,7 +1005,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
           <h2 style={{
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             marginBottom: '30px'
-          }} className="fade-in-down">Ready to Create with AI?</h2>
+          }} className="fade-in-down">Start AI Design</h2>
           <p style={{
             fontSize: '1.3rem',
             marginBottom: '40px',
@@ -1049,7 +1049,7 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
       {/* Footer Section */}
       <footer style={{
         padding: '60px 20px 30px',
-        background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>

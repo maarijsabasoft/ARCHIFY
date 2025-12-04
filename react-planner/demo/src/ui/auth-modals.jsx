@@ -1,6 +1,6 @@
 import React from 'react';
 
-const API_BASE_URL = 'http://localhost:5000/api/auth';
+const API_BASE_URL = 'https://archify.mirdemy.com/api/auth';
 
 // Google Client ID (from Google Cloud Console)
 // Make sure this matches the "Client ID" under your Web application OAuth client.
@@ -273,12 +273,12 @@ function ModalOverlay({ children, onClose }) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 10000,
-      backdropFilter: 'blur(5px)',
+      backdropFilter: 'blur(8px)',
       overflowY: 'auto',
       padding: '20px'
     },
@@ -290,50 +290,56 @@ function ModalOverlay({ children, onClose }) {
 
 // Shared styles
 var modalStyle = {
-  backgroundColor: '#1a1a2e',
-  borderRadius: '12px',
-  padding: '24px 28px',
-  width: '100%',
-  maxWidth: '360px',
-  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
+  backgroundColor: '#ffffff',
+  borderRadius: '16px',
+  padding: '32px 24px',
+  width: '450px',
+  maxWidth: '450px',
+  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
+  border: '1px solid rgba(0, 0, 0, 0.05)',
   position: 'relative',
   margin: 'auto'
 };
 
 var inputStyle = {
   width: '100%',
-  padding: '10px 12px',
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  borderRadius: '6px',
-  color: '#fff',
+  padding: '12px 16px',
+  backgroundColor: '#f8fafc',
+  border: '1px solid #e2e8f0',
+  borderRadius: '8px',
+  color: '#1e293b',
   fontSize: '14px',
   outline: 'none',
-  transition: 'border-color 0.2s, background-color 0.2s',
+  transition: 'border-color 0.2s, box-shadow 0.2s',
   boxSizing: 'border-box'
+};
+
+inputStyle[':focus'] = {
+  borderColor: '#4a5568',
+  boxShadow: '0 0 0 3px rgba(74, 85, 104, 0.1)'
 };
 
 var buttonStyle = {
   width: '100%',
-  padding: '10px',
-  backgroundColor: '#6366f1',
+  padding: '12px 16px',
+  backgroundColor: '#4a5568',
   color: '#fff',
   border: 'none',
-  borderRadius: '6px',
+  borderRadius: '8px',
   fontSize: '14px',
   fontWeight: '600',
   cursor: 'pointer',
-  transition: 'all 0.2s'
+  transition: 'all 0.2s',
+  boxShadow: '0 2px 4px rgba(74, 85, 104, 0.2)'
 };
 
 var googleButtonStyle = {
   width: '100%',
-  padding: '10px',
+  padding: '12px 16px',
   backgroundColor: '#fff',
-  color: '#333',
-  border: '1px solid #ddd',
-  borderRadius: '6px',
+  color: '#374151',
+  border: '1px solid #d1d5db',
+  borderRadius: '8px',
   fontSize: '14px',
   fontWeight: '500',
   cursor: 'pointer',
@@ -341,19 +347,22 @@ var googleButtonStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   gap: '8px',
-  transition: 'all 0.2s'
+  transition: 'all 0.2s',
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
 };
 
 var closeButtonStyle = {
   position: 'absolute',
-  top: '12px',
-  right: '12px',
+  top: '16px',
+  right: '16px',
   background: 'none',
   border: 'none',
-  color: '#888',
-  fontSize: '20px',
+  color: '#6b7280',
+  fontSize: '24px',
   cursor: 'pointer',
-  padding: '2px'
+  padding: '4px',
+  borderRadius: '6px',
+  transition: 'all 0.2s'
 };
 
 // Login Modal Component
@@ -405,52 +414,9 @@ export function LoginModal() {
   function handleGoogleLogin() {
     setError('');
     setLoading(true);
-    
-    loadGoogleScript()
-      .then(function() {
-        if (window.google && window.google.accounts) {
-          window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: function(response) {
-              if (response.credential) {
-                auth.googleLogin(response.credential)
-                  .then(function(data) {
-                    if (!data.success) {
-                      setError(data.error || 'Google login failed');
-                    }
-                    setLoading(false);
-                  })
-                  .catch(function() {
-                    setError('Connection error. Please try again.');
-                    setLoading(false);
-                  });
-              } else {
-                setError('Google sign-in was cancelled');
-                setLoading(false);
-              }
-            }
-          });
-          
-          window.google.accounts.id.prompt(function(notification) {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              window.google.accounts.id.renderButton(
-                document.getElementById('google-signin-btn-login'),
-                { theme: 'outline', size: 'large', width: '100%' }
-              );
-              var btn = document.getElementById('google-signin-btn-login');
-              if (btn) btn.click();
-              setLoading(false);
-            }
-          });
-        } else {
-          setError('Failed to load Google Sign-In');
-          setLoading(false);
-        }
-      })
-      .catch(function() {
-        setError('Failed to load Google Sign-In');
-        setLoading(false);
-      });
+
+    // Redirect to server-side OAuth flow
+    window.location.href = API_BASE_URL + '/google-login';
   }
 
   return React.createElement(ModalOverlay, { onClose: function() { auth.setShowLoginModal(false); } },
@@ -460,19 +426,16 @@ export function LoginModal() {
         style: closeButtonStyle
       }, '×'),
 
-      React.createElement('div', { style: { textAlign: 'center', marginBottom: '20px' } },
-        React.createElement('h2', { 
-          style: { 
-            color: '#fff', 
-            fontSize: '22px', 
+      React.createElement('div', { style: { textAlign: 'center', marginBottom: '24px' } },
+        React.createElement('h2', {
+          style: {
+            color: '#1e293b',
+            fontSize: '24px',
             fontWeight: '700',
-            marginBottom: '4px',
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          } 
+            marginBottom: '8px'
+          }
         }, 'Welcome Back'),
-        React.createElement('p', { style: { color: '#888', fontSize: '13px', margin: 0 } }, 'Sign in to continue to Archify')
+        React.createElement('p', { style: { color: '#64748b', fontSize: '14px', margin: 0 } }, 'Sign in to continue to Archify')
       ),
 
       error && React.createElement('div', {
@@ -489,8 +452,8 @@ export function LoginModal() {
 
       React.createElement('form', { onSubmit: handleSubmit },
         React.createElement('div', { style: { marginBottom: '12px' } },
-          React.createElement('label', { 
-            style: { display: 'block', color: '#aaa', fontSize: '12px', marginBottom: '4px' } 
+          React.createElement('label', {
+            style: { display: 'block', color: '#374151', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }
           }, 'Email'),
           React.createElement('input', {
             type: 'email',
@@ -503,8 +466,8 @@ export function LoginModal() {
         ),
 
         React.createElement('div', { style: { marginBottom: '8px' } },
-          React.createElement('label', { 
-            style: { display: 'block', color: '#aaa', fontSize: '12px', marginBottom: '4px' } 
+          React.createElement('label', {
+            style: { display: 'block', color: '#374151', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }
           }, 'Password'),
           React.createElement('input', {
             type: 'password',
@@ -523,9 +486,11 @@ export function LoginModal() {
             style: {
               background: 'none',
               border: 'none',
-              color: '#6366f1',
-              fontSize: '12px',
-              cursor: 'pointer'
+              color: '#4a5568',
+              fontSize: '13px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              textDecoration: 'underline'
             }
           }, 'Forgot password?')
         ),
@@ -533,7 +498,21 @@ export function LoginModal() {
         React.createElement('button', {
           type: 'submit',
           disabled: loading,
-          style: Object.assign({}, buttonStyle, { opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' })
+          style: Object.assign({}, buttonStyle, { opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }),
+          onMouseEnter: function(e) {
+            if (!loading) {
+              e.target.style.backgroundColor = '#374151';
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 4px 8px rgba(74, 85, 104, 0.3)';
+            }
+          },
+          onMouseLeave: function(e) {
+            if (!loading) {
+              e.target.style.backgroundColor = '#4a5568';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 2px 4px rgba(74, 85, 104, 0.2)';
+            }
+          }
         }, loading ? 'Signing in...' : 'Sign In')
       ),
 
@@ -541,13 +520,13 @@ export function LoginModal() {
         style: {
           display: 'flex',
           alignItems: 'center',
-          margin: '16px 0',
-          gap: '12px'
+          margin: '20px 0',
+          gap: '16px'
         }
       },
-        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' } }),
-        React.createElement('span', { style: { color: '#666', fontSize: '12px' } }, 'or'),
-        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' } })
+        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: '#e5e7eb' } }),
+        React.createElement('span', { style: { color: '#6b7280', fontSize: '14px', fontWeight: '500' } }, 'or'),
+        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: '#e5e7eb' } })
       ),
 
       React.createElement('div', { id: 'google-signin-btn-login', style: { display: 'none' } }),
@@ -555,7 +534,19 @@ export function LoginModal() {
         type: 'button',
         onClick: handleGoogleLogin,
         disabled: loading,
-        style: Object.assign({}, googleButtonStyle, { opacity: loading ? 0.7 : 1 })
+        style: Object.assign({}, googleButtonStyle, { opacity: loading ? 0.7 : 1 }),
+        onMouseEnter: function(e) {
+          if (!loading) {
+            e.target.style.backgroundColor = '#f3f4f6';
+            e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+          }
+        },
+        onMouseLeave: function(e) {
+          if (!loading) {
+            e.target.style.backgroundColor = '#fff';
+            e.target.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+          }
+        }
       },
         React.createElement('svg', { width: '16', height: '16', viewBox: '0 0 24 24' },
           React.createElement('path', { fill: '#4285F4', d: 'M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z' }),
@@ -567,7 +558,7 @@ export function LoginModal() {
       ),
 
       React.createElement('p', {
-        style: { textAlign: 'center', marginTop: '16px', color: '#888', fontSize: '12px', marginBottom: 0 }
+        style: { textAlign: 'center', marginTop: '20px', color: '#6b7280', fontSize: '14px', marginBottom: 0 }
       },
         "Don't have an account? ",
         React.createElement('button', {
@@ -576,10 +567,11 @@ export function LoginModal() {
           style: {
             background: 'none',
             border: 'none',
-            color: '#6366f1',
+            color: '#4a5568',
             cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: '600'
+            fontSize: '14px',
+            fontWeight: '600',
+            textDecoration: 'underline'
           }
         }, 'Sign up')
       )
@@ -648,52 +640,9 @@ export function SignupModal() {
   function handleGoogleSignup() {
     setError('');
     setLoading(true);
-    
-    loadGoogleScript()
-      .then(function() {
-        if (window.google && window.google.accounts) {
-          window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: function(response) {
-              if (response.credential) {
-                auth.googleLogin(response.credential)
-                  .then(function(data) {
-                    if (!data.success) {
-                      setError(data.error || 'Google signup failed');
-                    }
-                    setLoading(false);
-                  })
-                  .catch(function() {
-                    setError('Connection error. Please try again.');
-                    setLoading(false);
-                  });
-              } else {
-                setError('Google sign-in was cancelled');
-                setLoading(false);
-              }
-            }
-          });
-          
-          window.google.accounts.id.prompt(function(notification) {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              window.google.accounts.id.renderButton(
-                document.getElementById('google-signin-btn-signup'),
-                { theme: 'outline', size: 'large', width: '100%' }
-              );
-              var btn = document.getElementById('google-signin-btn-signup');
-              if (btn) btn.click();
-              setLoading(false);
-            }
-          });
-        } else {
-          setError('Failed to load Google Sign-In');
-          setLoading(false);
-        }
-      })
-      .catch(function() {
-        setError('Failed to load Google Sign-In');
-        setLoading(false);
-      });
+
+    // Redirect to server-side OAuth flow
+    window.location.href = API_BASE_URL + '/google-login';
   }
 
   return React.createElement(ModalOverlay, { onClose: function() { auth.setShowSignupModal(false); } },
@@ -703,19 +652,16 @@ export function SignupModal() {
         style: closeButtonStyle
       }, '×'),
 
-      React.createElement('div', { style: { textAlign: 'center', marginBottom: '16px' } },
-        React.createElement('h2', { 
-          style: { 
-            color: '#fff', 
-            fontSize: '22px', 
+      React.createElement('div', { style: { textAlign: 'center', marginBottom: '20px' } },
+        React.createElement('h2', {
+          style: {
+            color: '#1e293b',
+            fontSize: '24px',
             fontWeight: '700',
-            marginBottom: '4px',
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          } 
+            marginBottom: '8px'
+          }
         }, 'Create Account'),
-        React.createElement('p', { style: { color: '#888', fontSize: '13px', margin: 0 } }, 'Join Archify to start designing')
+        React.createElement('p', { style: { color: '#64748b', fontSize: '14px', margin: 0 } }, 'Join Archify to start designing')
       ),
 
       error && React.createElement('div', {
@@ -731,9 +677,9 @@ export function SignupModal() {
       }, error),
 
       React.createElement('form', { onSubmit: handleSubmit },
-        React.createElement('div', { style: { marginBottom: '10px' } },
-          React.createElement('label', { 
-            style: { display: 'block', color: '#aaa', fontSize: '12px', marginBottom: '4px' } 
+        React.createElement('div', { style: { marginBottom: '12px' } },
+          React.createElement('label', {
+            style: { display: 'block', color: '#374151', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }
           }, 'Full Name'),
           React.createElement('input', {
             type: 'text',
@@ -745,9 +691,9 @@ export function SignupModal() {
           })
         ),
 
-        React.createElement('div', { style: { marginBottom: '10px' } },
-          React.createElement('label', { 
-            style: { display: 'block', color: '#aaa', fontSize: '12px', marginBottom: '4px' } 
+        React.createElement('div', { style: { marginBottom: '12px' } },
+          React.createElement('label', {
+            style: { display: 'block', color: '#374151', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }
           }, 'Email'),
           React.createElement('input', {
             type: 'email',
@@ -759,9 +705,9 @@ export function SignupModal() {
           })
         ),
 
-        React.createElement('div', { style: { marginBottom: '10px' } },
-          React.createElement('label', { 
-            style: { display: 'block', color: '#aaa', fontSize: '12px', marginBottom: '4px' } 
+        React.createElement('div', { style: { marginBottom: '12px' } },
+          React.createElement('label', {
+            style: { display: 'block', color: '#374151', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }
           }, 'Password'),
           React.createElement('input', {
             type: 'password',
@@ -773,9 +719,9 @@ export function SignupModal() {
           })
         ),
 
-        React.createElement('div', { style: { marginBottom: '16px' } },
-          React.createElement('label', { 
-            style: { display: 'block', color: '#aaa', fontSize: '12px', marginBottom: '4px' } 
+        React.createElement('div', { style: { marginBottom: '20px' } },
+          React.createElement('label', {
+            style: { display: 'block', color: '#374151', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }
           }, 'Confirm Password'),
           React.createElement('input', {
             type: 'password',
@@ -790,7 +736,21 @@ export function SignupModal() {
         React.createElement('button', {
           type: 'submit',
           disabled: loading,
-          style: Object.assign({}, buttonStyle, { opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' })
+          style: Object.assign({}, buttonStyle, { opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }),
+          onMouseEnter: function(e) {
+            if (!loading) {
+              e.target.style.backgroundColor = '#374151';
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 4px 8px rgba(74, 85, 104, 0.3)';
+            }
+          },
+          onMouseLeave: function(e) {
+            if (!loading) {
+              e.target.style.backgroundColor = '#4a5568';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 2px 4px rgba(74, 85, 104, 0.2)';
+            }
+          }
         }, loading ? 'Creating...' : 'Create Account')
       ),
 
@@ -798,13 +758,13 @@ export function SignupModal() {
         style: {
           display: 'flex',
           alignItems: 'center',
-          margin: '14px 0',
-          gap: '12px'
+          margin: '20px 0',
+          gap: '16px'
         }
       },
-        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' } }),
-        React.createElement('span', { style: { color: '#666', fontSize: '12px' } }, 'or'),
-        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' } })
+        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: '#e5e7eb' } }),
+        React.createElement('span', { style: { color: '#6b7280', fontSize: '14px', fontWeight: '500' } }, 'or'),
+        React.createElement('div', { style: { flex: 1, height: '1px', backgroundColor: '#e5e7eb' } })
       ),
 
       React.createElement('div', { id: 'google-signin-btn-signup', style: { display: 'none' } }),
@@ -812,7 +772,19 @@ export function SignupModal() {
         type: 'button',
         onClick: handleGoogleSignup,
         disabled: loading,
-        style: Object.assign({}, googleButtonStyle, { opacity: loading ? 0.7 : 1 })
+        style: Object.assign({}, googleButtonStyle, { opacity: loading ? 0.7 : 1 }),
+        onMouseEnter: function(e) {
+          if (!loading) {
+            e.target.style.backgroundColor = '#f3f4f6';
+            e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+          }
+        },
+        onMouseLeave: function(e) {
+          if (!loading) {
+            e.target.style.backgroundColor = '#fff';
+            e.target.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+          }
+        }
       },
         React.createElement('svg', { width: '16', height: '16', viewBox: '0 0 24 24' },
           React.createElement('path', { fill: '#4285F4', d: 'M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z' }),
@@ -824,7 +796,7 @@ export function SignupModal() {
       ),
 
       React.createElement('p', {
-        style: { textAlign: 'center', marginTop: '14px', color: '#888', fontSize: '12px', marginBottom: 0 }
+        style: { textAlign: 'center', marginTop: '20px', color: '#6b7280', fontSize: '14px', marginBottom: 0 }
       },
         'Already have an account? ',
         React.createElement('button', {
@@ -833,10 +805,11 @@ export function SignupModal() {
           style: {
             background: 'none',
             border: 'none',
-            color: '#6366f1',
+            color: '#4a5568',
             cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: '600'
+            fontSize: '14px',
+            fontWeight: '600',
+            textDecoration: 'underline'
           }
         }, 'Sign in')
       )
@@ -925,7 +898,7 @@ export function VerificationModal() {
         }, 'Verify Your Email'),
         React.createElement('p', { style: { color: '#888', fontSize: '13px', margin: 0 } }, 
           'We sent a 6-digit code to'),
-        React.createElement('p', { style: { color: '#6366f1', fontSize: '13px', margin: '4px 0 0 0', fontWeight: '600' } }, 
+        React.createElement('p', { style: { color: '#4a5568', fontSize: '13px', margin: '4px 0 0 0', fontWeight: '600' } }, 
           auth.pendingEmail)
       ),
 
@@ -992,7 +965,7 @@ export function VerificationModal() {
           style: {
             background: 'none',
             border: 'none',
-            color: '#6366f1',
+            color: '#4a5568',
             cursor: resending ? 'not-allowed' : 'pointer',
             fontSize: '12px',
             fontWeight: '600',
@@ -1110,7 +1083,7 @@ export function ForgotPasswordModal() {
           style: {
             background: 'none',
             border: 'none',
-            color: '#6366f1',
+            color: '#4a5568',
             cursor: 'pointer',
             fontSize: '12px',
             fontWeight: '600'
@@ -1192,7 +1165,7 @@ export function ResetPasswordModal() {
         }, 'Reset Password'),
         React.createElement('p', { style: { color: '#888', fontSize: '13px', margin: 0 } }, 
           'Enter the code sent to'),
-        React.createElement('p', { style: { color: '#6366f1', fontSize: '13px', margin: '4px 0 0 0', fontWeight: '600' } }, 
+        React.createElement('p', { style: { color: '#4a5568', fontSize: '13px', margin: '4px 0 0 0', fontWeight: '600' } }, 
           auth.pendingEmail)
       ),
 
@@ -1296,7 +1269,7 @@ export function UserMenu() {
         onClick: function() { auth.setShowSignupModal(true); },
         style: {
           padding: '10px 20px',
-          backgroundColor: '#6366f1',
+          backgroundColor: '#4a5568',
           color: '#fff',
           border: 'none',
           borderRadius: '8px',
@@ -1340,7 +1313,7 @@ export function UserMenu() {
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              backgroundColor: '#6366f1',
+              backgroundColor: '#4a5568',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1415,4 +1388,53 @@ export function UserMenu() {
   );
 }
 
-export default { AuthProvider, useAuth, LoginModal, SignupModal, VerificationModal, ForgotPasswordModal, ResetPasswordModal, UserMenu };
+// Auth Success Component for handling OAuth redirects
+export function AuthSuccess() {
+  React.useEffect(() => {
+    // Get token and user_id from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userId = urlParams.get('user_id');
+
+    if (token) {
+      // Store the token
+      localStorage.setItem('authToken', token);
+
+      // Fetch user data
+      fetch(API_BASE_URL + '/me', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update auth context if available
+          const auth = useAuth();
+          if (auth && auth.setUser) {
+            auth.setUser(data.user);
+          }
+
+          // Clean up URL and redirect to main app
+          window.history.replaceState({}, document.title, '/');
+          // You might want to redirect to a specific page or show a success message
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+    }
+  }, []);
+
+  return React.createElement('div', {
+    style: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      fontSize: '18px'
+    }
+  }, 'Completing authentication...');
+}
+
+export default { AuthProvider, useAuth, LoginModal, SignupModal, VerificationModal, ForgotPasswordModal, ResetPasswordModal, UserMenu, AuthSuccess };

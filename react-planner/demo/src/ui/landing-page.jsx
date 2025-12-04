@@ -1,7 +1,7 @@
 import React from 'react';
 import Header, { AILogo } from './header';
 import { useSubscription } from './subscription';
-import { useAuth } from './auth-modals';
+import { useAuth } from './auth-modals.jsx';
 
 const LandingPage = ({ onGetStarted, onShowAI }) => {
   var auth = useAuth();
@@ -32,6 +32,18 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
   const [isHoveredScratch, setIsHoveredScratch] = React.useState(false);
   const [isHoveredAI, setIsHoveredAI] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  // Mobile detection
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Scroll handler for navbar
   React.useEffect(() => {
@@ -108,8 +120,8 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
   // SVG Vector Icons for Features
   const DesignIcon = () => (
     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="40" cy="40" r="35" fill="#667eea" opacity="0.2"/>
-      <rect x="20" y="25" width="40" height="30" rx="3" fill="#667eea"/>
+      <circle cx="40" cy="40" r="35" fill="#4a5568" opacity="0.2"/>
+      <rect x="20" y="25" width="40" height="30" rx="3" fill="#4a5568"/>
       <line x1="30" y1="35" x2="50" y2="35" stroke="white" strokeWidth="2"/>
       <line x1="30" y1="42" x2="45" y2="42" stroke="white" strokeWidth="2"/>
       <line x1="30" y1="49" x2="40" y2="49" stroke="white" strokeWidth="2"/>
@@ -118,8 +130,8 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
 
   const PreviewIcon = () => (
     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="40" cy="40" r="35" fill="#764ba2" opacity="0.2"/>
-      <path d="M25 30 L40 20 L55 30 L55 50 L40 60 L25 50 Z" fill="#764ba2"/>
+      <circle cx="40" cy="40" r="35" fill="#2d3748" opacity="0.2"/>
+      <path d="M25 30 L40 20 L55 30 L55 50 L40 60 L25 50 Z" fill="#2d3748"/>
       <path d="M30 35 L40 28 L50 35 L50 48 L40 55 L30 48 Z" fill="white" opacity="0.8"/>
     </svg>
   );
@@ -220,6 +232,245 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
         .fade-in-delay-2 { animation: fadeInUp 1s ease-out 0.4s both; }
         .fade-in-delay-3 { animation: fadeInUp 1s ease-out 0.6s both; }
         .fade-in-delay-4 { animation: fadeInUp 1s ease-out 0.8s both; }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+
+        /* Global mobile fixes */
+        @media (max-width: 768px) {
+          * {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+          }
+
+          body, html {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+          }
+        }
+
+        /* Mobile First - Base styles are for mobile */
+        @media (max-width: 480px) {
+          .hero-section {
+            padding: 20px !important;
+            text-align: center !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+          }
+
+          .hero-content {
+            flex-direction: column !important;
+            gap: 30px !important;
+            text-align: center !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+          }
+
+          .hero-text {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+          }
+
+          .hero-visual {
+            order: -1 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+          }
+
+          .hero-buttons {
+            flex-direction: column !important;
+            gap: 15px !important;
+            align-items: center !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+          }
+
+          .hero-button {
+            width: 100% !important;
+            max-width: 300px !important;
+            overflow-x: hidden !important;
+          }
+
+          .features-section {
+            padding: 40px 20px !important;
+          }
+
+          .features-grid {
+            grid-template-columns: 1fr !important;
+            gap: 30px !important;
+          }
+
+          .pricing-section {
+            padding: 40px 20px !important;
+          }
+
+          .pricing-cards {
+            flex-direction: column !important;
+            align-items: center !important;
+          }
+
+          .pricing-card {
+            width: 100% !important;
+            max-width: 400px !important;
+          }
+
+          .architecture-animation {
+            height: 300px !important;
+          }
+
+          .stat-item {
+            margin-bottom: 20px !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .hero-section {
+            padding: 40px 20px !important;
+            min-height: auto !important;
+          }
+
+          .hero-content {
+            padding: 20px 0 !important;
+          }
+
+          .hero-title {
+            font-size: 2.5rem !important;
+            line-height: 1.2 !important;
+          }
+
+          .hero-subtitle {
+            font-size: 1.1rem !important;
+            line-height: 1.4 !important;
+          }
+
+          .features-section h2 {
+            font-size: 2rem !important;
+          }
+
+          .feature-card {
+            padding: 20px !important;
+          }
+
+          .pricing-section h2 {
+            font-size: 2rem !important;
+          }
+
+          .footer-section {
+            padding: 40px 20px !important;
+            text-align: center !important;
+          }
+
+          .footer-content {
+            flex-direction: column !important;
+            gap: 30px !important;
+            text-align: center !important;
+          }
+
+          .footer-cta-section {
+            text-align: center !important;
+            margin-bottom: 30px !important;
+          }
+
+          .footer-cta-buttons {
+            justify-content: center !important;
+            gap: 15px !important;
+          }
+
+          .footer-links-section {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+            gap: 30px !important;
+            text-align: center !important;
+          }
+
+          .social-links {
+            justify-content: center !important;
+          }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .hero-section {
+            padding: 60px 40px !important;
+          }
+
+          .features-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+
+          .pricing-cards {
+            justify-content: center !important;
+            gap: 20px !important;
+          }
+
+          .pricing-card {
+            flex: 0 1 400px !important;
+          }
+        }
+
+        @media (min-width: 1025px) {
+          .hero-section {
+            padding: 80px 60px !important;
+          }
+
+          .features-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+
+          .pricing-cards {
+            justify-content: center !important;
+          }
+        }
+
+        /* Touch-friendly interactions for mobile */
+        @media (hover: none) and (pointer: coarse) {
+          .hero-button,
+          .pricing-button,
+          .feature-card,
+          button,
+          a[role="button"] {
+            min-height: 44px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .hero-button:hover,
+          .pricing-button:hover,
+          .feature-card:hover {
+            transform: none !important;
+          }
+
+          .hero-button:active,
+          .pricing-button:active,
+          .feature-card:active {
+            transform: scale(0.98) !important;
+          }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+          .hero-section {
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%) !important;
+          }
+
+          .feature-card {
+            border: 2px solid #ffffff !important;
+          }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+          *,
+          *::before,
+          *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
       `}</style>
 
       {/* Navbar */}
@@ -239,7 +490,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff',
         padding: '120px 20px 40px',
         position: 'relative',
@@ -294,7 +545,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
                   padding: '15px 35px',
                   fontSize: '1rem',
                   fontWeight: 'bold',
-                  color: '#667eea',
+                  color: '#4a5568',
                   backgroundColor: '#ffffff',
                   border: 'none',
                   borderRadius: '50px',
@@ -352,7 +603,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
             textAlign: 'center',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             marginBottom: '20px',
-            color: '#667eea'
+            color: '#4a5568'
           }} className="fade-in-down">Powerful Features</h2>
           <p style={{
             textAlign: 'center',
@@ -403,7 +654,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
       {/* Tutorial Section */}
       <section id="tutorials" style={{
         padding: '100px 20px',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
@@ -466,7 +717,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
                 padding: '16px 40px',
                 fontSize: '1.1rem',
                 fontWeight: 'bold',
-                color: '#667eea',
+                color: '#4a5568',
                 backgroundColor: '#ffffff',
                 border: 'none',
                 borderRadius: '50px',
@@ -525,7 +776,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
             textAlign: 'center',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             marginBottom: '20px',
-            color: '#667eea'
+            color: '#4a5568'
           }} className="fade-in-down">Simple Pricing</h2>
           <p style={{
             textAlign: 'center',
@@ -554,7 +805,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
               
               return (
               <div key={idx} style={{
-                background: plan.popular ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ffffff',
+                background: plan.popular ? 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)' : '#ffffff',
                 color: plan.popular ? '#ffffff' : '#333',
                 padding: '40px 30px',
                 borderRadius: '20px',
@@ -608,8 +859,8 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
                     border: 'none',
                     borderRadius: '10px',
                     cursor: isCurrentPlan ? 'default' : 'pointer',
-                    background: plan.popular ? '#ffffff' : '#667eea',
-                    color: plan.popular ? '#667eea' : '#ffffff',
+                    background: plan.popular ? '#ffffff' : '#4a5568',
+                    color: plan.popular ? '#4a5568' : '#ffffff',
                     transition: 'all 0.3s ease',
                     opacity: isLoading ? 0.7 : 1
                   }}
@@ -635,7 +886,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
       {/* CTA Section */}
       <section style={{
         padding: '100px 20px',
-        background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff',
         textAlign: 'center'
       }}>
@@ -643,7 +894,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
           <h2 style={{
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             marginBottom: '30px'
-          }} className="fade-in-down">Ready to Get Started?</h2>
+          }} className="fade-in-down">Start from Scratch</h2>
           <p style={{
             fontSize: '1.3rem',
             marginBottom: '40px',
@@ -659,7 +910,7 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
               padding: '20px 60px',
               fontSize: '1.3rem',
               fontWeight: 'bold',
-              color: '#f5576c',
+              color: '#4a5568',
               backgroundColor: '#ffffff',
               border: 'none',
               borderRadius: '50px',
@@ -687,52 +938,105 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
       {/* Footer Section */}
       <footer style={{
         padding: '60px 20px 30px',
-        background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)',
+        background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
         color: '#ffffff'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '40px',
-            marginBottom: '40px'
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: '60px',
+            marginBottom: '40px',
+            flexWrap: 'wrap'
           }}>
-            <div className="fade-in-up">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                <AILogo />
-                <h3 style={{ fontSize: '1.5rem', color: '#ffffff', margin: 0 }}>Archify</h3>
+            {/* Left side - 2 CTA sections */}
+            <div style={{ flex: '1', minWidth: '300px' }}>
+              <div className="fade-in-up footer-cta-section" style={{ marginBottom: '30px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+                  <AILogo />
+                  <h3 style={{ fontSize: '1.5rem', color: '#ffffff', margin: 0 }}>Archify</h3>
+                </div>
+                <p style={{ color: '#ffffff', lineHeight: '1.6', opacity: 0.9, marginBottom: '20px' }}>
+                  Create stunning 2D floorplans and visualize them in beautiful 3D.
+                  The ultimate tool for interior designers and architects.
+                </p>
+                <div className="footer-cta-buttons" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => auth.setShowSignupModal(true)}
+                    style={{
+                      padding: '12px 24px',
+                      background: '#ffffff',
+                      color: '#4a5568',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      fontSize: '0.95rem'
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                  >
+                    Sign Up Free
+                  </button>
+                  <button
+                    onClick={() => auth.setShowLoginModal(true)}
+                    style={{
+                      padding: '12px 24px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: '#ffffff',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      fontSize: '0.95rem'
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+                  >
+                    Sign In
+                  </button>
+                </div>
               </div>
-              <p style={{ color: '#ffffff', lineHeight: '1.6', opacity: 0.9 }}>
-                Create stunning 2D floorplans and visualize them in beautiful 3D.
-                The ultimate tool for interior designers and architects.
-              </p>
             </div>
-            <div className="fade-in-delay-1">
-              <h4 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ffffff' }}>Product</h4>
-              <ul style={{ listStyle: 'none', padding: 0, color: '#ffffff', opacity: 0.9 }}>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Features</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Pricing</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Documentation</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Updates</li>
-              </ul>
-            </div>
-            <div className="fade-in-delay-2">
-              <h4 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ffffff' }}>Company</h4>
-              <ul style={{ listStyle: 'none', padding: 0, color: '#ffffff', opacity: 0.9 }}>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>About</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Blog</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Careers</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Contact</li>
-              </ul>
-            </div>
-            <div className="fade-in-delay-3">
-              <h4 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ffffff' }}>Support</h4>
-              <ul style={{ listStyle: 'none', padding: 0, color: '#ffffff', opacity: 0.9 }}>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Help Center</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Community</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Privacy</li>
-                <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Terms</li>
-              </ul>
+
+            {/* Right side - Links sections */}
+            <div className="footer-links-section" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '40px',
+              flex: '2',
+              minWidth: '400px'
+            }}>
+              <div className="fade-in-delay-1">
+                <h4 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ffffff' }}>Product</h4>
+                <ul style={{ listStyle: 'none', padding: 0, color: '#ffffff', opacity: 0.9 }}>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Features</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Pricing</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Documentation</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Updates</li>
+                </ul>
+              </div>
+              <div className="fade-in-delay-2">
+                <h4 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ffffff' }}>Company</h4>
+                <ul style={{ listStyle: 'none', padding: 0, color: '#ffffff', opacity: 0.9 }}>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>About</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Blog</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Careers</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Contact</li>
+                </ul>
+              </div>
+              <div className="fade-in-delay-3">
+                <h4 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ffffff' }}>Support</h4>
+                <ul style={{ listStyle: 'none', padding: 0, color: '#ffffff', opacity: 0.9 }}>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Help Center</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Community</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Privacy</li>
+                  <li style={{ marginBottom: '10px', cursor: 'pointer' }}>Terms</li>
+                </ul>
+              </div>
             </div>
           </div>
           <div style={{

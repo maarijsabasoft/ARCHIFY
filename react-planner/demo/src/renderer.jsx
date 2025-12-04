@@ -12,7 +12,7 @@ import ToolbarScreenshotButton from './ui/toolbar-screenshot-button';
 import LandingPage from './ui/landing-page';
 import MakeWithAI from './ui/make-with-ai';
 import Header, { AILogo } from './ui/header';
-import { AuthProvider, LoginModal, SignupModal, VerificationModal, ForgotPasswordModal, ResetPasswordModal, UserMenu } from './ui/auth-modals';
+import { AuthProvider, LoginModal, SignupModal, VerificationModal, ForgotPasswordModal, ResetPasswordModal, UserMenu } from './ui/auth-modals.jsx';
 import { TourProvider, TourOverlay, WelcomeTourModal, TourHelpButton } from './ui/product-tour';
 import { SubscriptionProvider, PricingSection, AccountPage } from './ui/subscription';
 
@@ -344,7 +344,7 @@ class App extends React.Component {
 
           /* Override React Planner toolbar background */
           .toolbar, .toolbar-container, [class*="toolbar"], [class*="Toolbar"] {
-            background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
           }
 
           /* Override any toolbar background colors */
@@ -352,19 +352,19 @@ class App extends React.Component {
           [class*="Toolbar"] [class*="background"],
           .toolbar-background,
           .toolbar-bg {
-            background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
           }
 
           /* Override specific toolbar elements */
           .toolbar-wrapper,
           .toolbar-main,
           .toolbar-content {
-            background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
           }
 
           /* Override React Planner sidebar background */
           .sidebar, .sidebar-container, [class*="sidebar"], [class*="Sidebar"] {
-            background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
           }
 
           /* Override sidebar background colors */
@@ -372,7 +372,7 @@ class App extends React.Component {
           [class*="Sidebar"] [class*="background"],
           .sidebar-background,
           .sidebar-bg {
-            background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
           }
 
           /* Override specific sidebar elements */
@@ -380,7 +380,7 @@ class App extends React.Component {
           .sidebar-main,
           .sidebar-content,
           .sidebar-panel {
-            background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
           }
 
           /* Ensure toolbar and sidebar text/icons are visible on gradient */
@@ -437,7 +437,7 @@ class App extends React.Component {
         <section style={{
           width: '100%',
           height: '100vh',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
           color: '#ffffff',
           display: 'flex',
           alignItems: 'center',
@@ -495,7 +495,7 @@ class App extends React.Component {
                     padding: '15px 35px',
                     fontSize: '1rem',
                     fontWeight: 'bold',
-                    color: '#667eea',
+                    color: '#4a5568',
                     backgroundColor: '#ffffff',
                     border: 'none',
                     borderRadius: '50px',
@@ -564,7 +564,7 @@ class App extends React.Component {
         <section style={{
           width: '100%',
           padding: '100px 40px',
-          background: 'linear-gradient(135deg, rgb(240, 147, 251) 0%, rgb(245, 87, 108) 100%)',
+          background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -579,7 +579,7 @@ class App extends React.Component {
               fontWeight: 'bold',
               marginBottom: '25px',
               textShadow: '2px 2px 8px rgba(0,0,0,0.2)'
-            }}>Ready to Create?</h2>
+            }}>Start from Scratch</h2>
             <p style={{
               fontSize: '1.25rem',
               marginBottom: '40px',
@@ -595,7 +595,7 @@ class App extends React.Component {
                 padding: '20px 60px',
                 fontSize: '1.4rem',
                 fontWeight: 'bold',
-                color: '#f5576c',
+                color: '#4a5568',
                 backgroundColor: '#ffffff',
                 border: 'none',
                 borderRadius: '50px',
@@ -622,7 +622,7 @@ class App extends React.Component {
         {/* Footer Section */}
         <footer style={{
           padding: '60px 20px 30px',
-          background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)',
+          background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
           color: '#ffffff'
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -877,7 +877,7 @@ class App extends React.Component {
             <style>{`
               /* Override React Planner toolbar background */
               .toolbar, .toolbar-container, [class*="toolbar"], [class*="Toolbar"] {
-                background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
               }
               [class*="toolbar"] [class*="background"],
               [class*="Toolbar"] [class*="background"],
@@ -886,11 +886,11 @@ class App extends React.Component {
               .toolbar-wrapper,
               .toolbar-main,
               .toolbar-content {
-                background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
               }
               /* Override React Planner sidebar background */
               .sidebar, .sidebar-container, [class*="sidebar"], [class*="Sidebar"] {
-                background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
               }
               [class*="sidebar"] [class*="background"],
               [class*="Sidebar"] [class*="background"],
@@ -900,7 +900,7 @@ class App extends React.Component {
               .sidebar-main,
               .sidebar-content,
               .sidebar-panel {
-                background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%) !important;
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
               }
               [class*="toolbar"] *,
               [class*="sidebar"] * {
@@ -926,6 +926,176 @@ class App extends React.Component {
               [class*="sidebar"] .button:hover {
                 background: rgba(255, 255, 255, 0.3) !important;
                 border-color: rgba(255, 255, 255, 0.5) !important;
+              }
+
+              /* ===== GLOBAL RESPONSIVE FIXES ===== */
+              /* Prevent horizontal scrolling globally */
+              html, body, #root, .app-container {
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+                width: 100vw !important;
+              }
+
+              * {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+              }
+
+              /* ===== RESPONSIVE DESIGN FOR PLANNER ===== */
+
+              /* Mobile and tablet adjustments */
+              @media (max-width: 1024px) {
+                [class*="toolbar"] {
+                  height: auto !important;
+                  min-height: 50px !important;
+                  flex-wrap: wrap !important;
+                  padding: 5px !important;
+                  overflow-x: hidden !important;
+                  max-width: 100vw !important;
+                }
+
+                [class*="sidebar"] {
+                  width: 280px !important;
+                  max-width: 80vw !important;
+                  overflow-x: hidden !important;
+                }
+
+                /* Smaller buttons on mobile */
+                [class*="toolbar"] button,
+                [class*="toolbar"] .button {
+                  min-width: 40px !important;
+                  height: 40px !important;
+                  font-size: 12px !important;
+                  flex-shrink: 0 !important;
+                }
+
+                /* Planner canvas adjustments */
+                .react-planner,
+                [class*="viewer"],
+                [class*="canvas"] {
+                  overflow-x: hidden !important;
+                  max-width: 100vw !important;
+                }
+
+                /* Hide toolbar text on very small screens */
+                @media (max-width: 768px) {
+                  [class*="toolbar"] button span,
+                  [class*="toolbar"] .button span {
+                    display: none !important;
+                  }
+
+                  [class*="toolbar"] {
+                    justify-content: center !important;
+                    gap: 5px !important;
+                    overflow-x: hidden !important;
+                  }
+
+                  [class*="sidebar"] {
+                    width: 250px !important;
+                    max-width: 85vw !important;
+                    overflow-x: hidden !important;
+                  }
+
+                  /* Stack layout on very small screens */
+                  .react-planner {
+                    flex-direction: column !important;
+                  }
+
+                  [class*="toolbar"] {
+                    order: -1 !important;
+                    width: 100% !important;
+                    max-width: 100vw !important;
+                  }
+
+                  [class*="sidebar"] {
+                    width: 100% !important;
+                    max-width: 100vw !important;
+                    max-height: 200px !important;
+                  }
+                }
+
+                /* Extra small screens */
+                @media (max-width: 480px) {
+                  [class*="toolbar"] {
+                    padding: 2px !important;
+                    min-height: 40px !important;
+                  }
+
+                  [class*="toolbar"] button,
+                  [class*="toolbar"] .button {
+                    min-width: 35px !important;
+                    height: 35px !important;
+                    font-size: 10px !important;
+                  }
+
+                  [class*="sidebar"] {
+                    max-height: 150px !important;
+                    font-size: 12px !important;
+                  }
+                }
+              }
+
+              /* Touch-friendly interactions */
+              @media (hover: none) and (pointer: coarse) {
+                [class*="toolbar"] button,
+                [class*="toolbar"] .button,
+                [class*="sidebar"] button,
+                [class*="sidebar"] .button {
+                  min-width: 44px !important;
+                  min-height: 44px !important;
+                  touch-action: manipulation !important;
+                }
+
+                /* Larger touch targets for property panels */
+                [class*="property"] input,
+                [class*="property"] select,
+                [class*="property"] button {
+                  min-height: 44px !important;
+                  font-size: 16px !important; /* Prevent zoom on iOS */
+                }
+              }
+
+              /* High DPI displays */
+              @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+                [class*="toolbar"] button,
+                [class*="sidebar"] button {
+                  border-width: 1px !important;
+                }
+              }
+
+              /* Reduced motion support */
+              @media (prefers-reduced-motion: reduce) {
+                [class*="toolbar"] *,
+                [class*="sidebar"] *,
+                .react-planner * {
+                  animation: none !important;
+                  transition: none !important;
+                }
+              }
+
+              /* Dark mode support */
+              @media (prefers-color-scheme: dark) {
+                .react-planner {
+                  background: #1a1a1a !important;
+                }
+
+                [class*="toolbar"],
+                [class*="sidebar"] {
+                  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+                }
+
+                [class*="toolbar"] *,
+                [class*="sidebar"] * {
+                  color: #e2e8f0 !important;
+                }
+
+                [class*="sidebar"] input,
+                [class*="sidebar"] select,
+                [class*="sidebar"] textarea {
+                  background: #2d3748 !important;
+                  border-color: #4a5568 !important;
+                  color: #e2e8f0 !important;
+                }
               }
             `}</style>
             <Provider store={store}>

@@ -3,7 +3,7 @@ Authentication module for Archify
 Handles user registration, login, Google OAuth, email verification, and password reset
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session, redirect, url_for, flash, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from datetime import datetime, timedelta
@@ -12,6 +12,9 @@ import os
 import requests
 import secrets
 import string
+import json
+import logging
+from authlib.integrations.flask_client import OAuth
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -25,10 +28,29 @@ GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 # Resend API configuration
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', 're_cxVB8LkY_Fo9nWFAEwdxe6LoAp7q7vipt')
 RESEND_FROM_EMAIL = os.environ.get('RESEND_FROM_EMAIL', 'send@support.tokenmap.io')
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:9001')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://archify.mirdemy.com')
 
 # Create blueprint
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+
+# OAuth will be initialized in main.py and passed here
+oauth = None
+google = None
+logger = logging.getLogger(__name__)
+
+def init_oauth(oauth_instance):
+    """Initialize OAuth for this module"""
+    global oauth, google
+    oauth = oauth_instance
+
+    # Google OAuth setup
+    google = oauth.register(
+        name='google',
+        client_id=GOOGLE_CLIENT_ID,
+        client_secret=GOOGLE_CLIENT_SECRET,
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid email profile'}
+    )
 
 # User Model
 class User(db.Model):
@@ -647,32 +669,108 @@ def change_password():
     user = get_current_user()
     if not user:
         return jsonify({'success': False, 'error': 'Not authenticated'}), 401
-    
+
     if user.auth_provider == 'google' and not user.password_hash:
         return jsonify({'success': False, 'error': 'Google accounts cannot change password'}), 400
-    
+
     try:
         data = request.json
         current_password = data.get('current_password', '')
         new_password = data.get('new_password', '')
-        
+
         if not current_password or not new_password:
             return jsonify({'success': False, 'error': 'Current and new password are required'}), 400
-        
+
         if len(new_password) < 6:
             return jsonify({'success': False, 'error': 'New password must be at least 6 characters'}), 400
-        
+
         if not bcrypt.check_password_hash(user.password_hash, current_password):
             return jsonify({'success': False, 'error': 'Current password is incorrect'}), 401
-        
+
         user.password_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
         db.session.commit()
-        
+
         return jsonify({
             'success': True,
             'message': 'Password changed successfully'
         })
-        
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# Google OAuth Routes
+@auth_bp.route('/google-login', methods=['GET'])
+def google_login():
+    """Initiate Google OAuth login"""
+    callback_url = url_for('auth.google_auth_callback', _external=True)
+    nonce = secrets.token_urlsafe(16)
+    session['google_nonce'] = nonce
+
+    logger.debug(f"Initiating Google login with callback: {callback_url}, nonce: {nonce}")
+
+    try:
+        return google.authorize_redirect(callback_url, nonce=nonce)
+    except Exception as e:
+        logger.error(f"Google login initiation failed: {str(e)}")
+        return jsonify({'success': False, 'error': f'Google login initiation failed: {str(e)}'}), 500
+
+@auth_bp.route('/google/callback', methods=['GET', 'POST'])
+def google_auth_callback():
+    """Handle Google OAuth callback"""
+    try:
+        logger.debug(f"Received Google OAuth callback with request URL: {request.url}")
+
+        token = google.authorize_access_token()
+        logger.debug(f"Access token obtained: {json.dumps({k: v for k, v in token.items() if k != 'access_token'}, indent=2)}")
+
+        nonce = session.pop('google_nonce', None)
+        user_info = google.parse_id_token(token, nonce=nonce)
+
+        email = user_info.get("email")
+        name = user_info.get("name", email.split('@')[0] if email else "User")
+        google_id = user_info.get("sub")
+        avatar = user_info.get("picture")
+
+        if not email:
+            logger.error("No email in user info")
+            return jsonify({'success': False, 'error': 'Missing email information from Google'}), 400
+
+        # Check if user exists
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            # Update Google info if needed
+            if not user.google_id:
+                user.google_id = google_id
+                user.avatar = avatar or user.avatar
+                user.email_verified = True  # Google emails are verified
+                db.session.commit()
+        else:
+            # Create new user (Google users are auto-verified)
+            user = User(
+                email=email,
+                name=name,
+                avatar=avatar,
+                auth_provider='google',
+                google_id=google_id,
+                email_verified=True
+            )
+            db.session.add(user)
+            db.session.commit()
+
+        # Generate token
+        auth_token = generate_token(user)
+
+        logger.debug(f"Google login successful for user: {email}")
+
+        # For server-side OAuth, we need to redirect with the token
+        # In a production app, you'd typically store this in a session or secure cookie
+        # For now, we'll redirect to a success page
+        success_url = f"{FRONTEND_URL}/auth/success?token={auth_token}&user_id={user.id}"
+        return redirect(success_url)
+
+    except Exception as e:
+        logger.error(f"Google login failed: {str(e)}")
+        db.session.rollback()
+        return jsonify({'success': False, 'error': f'Google login failed: {str(e)}'}), 500

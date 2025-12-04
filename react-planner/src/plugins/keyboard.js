@@ -13,7 +13,8 @@ import {
   toggleSnap,
   copyProperties,
   pasteProperties,
-  setAlterateState
+  setAlterateState,
+  setMode
 } from '../actions/project-actions';
 
 export default function keyboard() {
@@ -35,7 +36,12 @@ export default function keyboard() {
         }
         case KEYBOARD_BUTTON_CODE.ESC:
         {
-          store.dispatch(rollback());
+          if (mode === MODE_3D_FIRST_PERSON || mode === MODE_3D_VIEW) {
+            // Exit 3D mode back to 2D
+            store.dispatch(setMode(MODE_IDLE));
+          } else {
+            store.dispatch(rollback());
+          }
           break;
         }
         case KEYBOARD_BUTTON_CODE.Z:

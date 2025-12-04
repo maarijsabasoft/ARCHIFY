@@ -1,13 +1,13 @@
 import React from 'react';
-import { UserMenu, useAuth } from './auth-modals';
+import { UserMenu, useAuth } from './auth-modals.jsx';
 
 // AI Logo Component - shared across the app
 export const AILogo = () => (
   <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="aiGradientHeader" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#667eea" />
-        <stop offset="100%" stopColor="#764ba2" />
+        <stop offset="0%" stopColor="#2d3748" />
+        <stop offset="100%" stopColor="#4a5568" />
       </linearGradient>
     </defs>
     <circle cx="20" cy="20" r="18" fill="url(#aiGradientHeader)" opacity="0.9"/>
@@ -36,7 +36,7 @@ const Header = ({
   onScrollToFeatures,
   currentPage = 'landing', // 'landing', 'ai', 'planner', 'tool'
   isScrolled = false,
-  isFixed = true
+  isFixed = false
 }) => {
   const auth = useAuth();
 
@@ -46,7 +46,7 @@ const Header = ({
     left: 0,
     right: 0,
     zIndex: 1000,
-    background: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
     backdropFilter: isScrolled ? 'blur(10px)' : 'none',
     boxShadow: isScrolled ? '0 2px 20px rgba(0,0,0,0.1)' : '0 2px 20px rgba(0,0,0,0.2)',
     transition: 'all 0.3s ease',
@@ -54,7 +54,7 @@ const Header = ({
   };
 
   const textColor = isScrolled ? '#333' : '#ffffff';
-  const logoColor = isScrolled ? '#667eea' : '#ffffff';
+  const logoColor = isScrolled ? '#4a5568' : '#ffffff';
 
   return (
     <nav style={navStyle}>
@@ -181,8 +181,8 @@ const Header = ({
                 onClick={() => auth.setShowSignupModal(true)} 
                 style={{
                   padding: '12px 30px',
-                  background: isScrolled ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ffffff',
-                  color: isScrolled ? '#ffffff' : '#667eea',
+                  background: isScrolled ? 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)' : '#ffffff',
+                  color: isScrolled ? '#ffffff' : '#4a5568',
                   border: 'none',
                   borderRadius: '25px',
                   fontWeight: 'bold',

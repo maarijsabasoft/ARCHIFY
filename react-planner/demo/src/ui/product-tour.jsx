@@ -58,8 +58,14 @@ var TOUR_STEPS = [
     icon: '🚶'
   },
   {
+    title: '3D Navigation',
+    description: 'Use WASD or arrow keys to move around. Mouse to look around. ESC or click 2D View button to exit.',
+    position: 'center',
+    icon: '🎮'
+  },
+  {
     title: 'Undo',
-    description: 'Undo your last action if you make a mistake.',
+    description: 'Undo your last action if you make a mistake. (Ctrl+Z)',
     buttonIndex: 7,
     position: 'right',
     icon: '↩️'
@@ -80,7 +86,7 @@ var TOUR_STEPS = [
   },
   {
     title: 'You\'re Ready!',
-    description: 'You\'re ready to design! Click the help button anytime to see this tour again.',
+    description: 'You\'re ready to design! In 3D mode: WASD/arrows to move, mouse to look, ESC to exit. Click help anytime.',
     position: 'center',
     icon: '🎉'
   }
@@ -276,7 +282,7 @@ export function TourOverlay() {
     height: targetRect.height + 12,
     borderRadius: '10px',
     boxShadow: '0 0 0 4000px rgba(0, 0, 0, 0.75)',
-    border: '3px solid #667eea',
+    border: '3px solid #4a5568',
     backgroundColor: 'transparent',
     pointerEvents: 'none',
     transition: 'all 0.3s ease',
@@ -321,7 +327,7 @@ export function TourOverlay() {
     height: 0,
     borderTop: '15px solid transparent',
     borderBottom: '15px solid transparent',
-    borderRight: '15px solid #667eea'
+    borderRight: '15px solid #4a5568'
   } : null;
 
   var headerStyle = {
@@ -335,7 +341,7 @@ export function TourOverlay() {
     width: '44px',
     height: '44px',
     borderRadius: '12px',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -374,7 +380,7 @@ export function TourOverlay() {
       width: index === tour.currentStep ? '20px' : '8px',
       height: '8px',
       borderRadius: '4px',
-      backgroundColor: index === tour.currentStep ? '#667eea' : 
+      backgroundColor: index === tour.currentStep ? '#4a5568' : 
                        index < tour.currentStep ? '#22c55e' : 'rgba(255,255,255,0.2)',
       transition: 'all 0.3s ease'
     };
@@ -421,7 +427,7 @@ export function TourOverlay() {
 
   var nextButtonStyle = {
     padding: '10px 22px',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
     color: '#fff',
     border: 'none',
     borderRadius: '8px',
@@ -560,7 +566,7 @@ export function WelcomeTourModal() {
     width: '90px',
     height: '90px',
     borderRadius: '24px',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -603,7 +609,7 @@ export function WelcomeTourModal() {
 
   var startButtonStyle = {
     padding: '14px 36px',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
     color: '#fff',
     border: 'none',
     borderRadius: '12px',
@@ -666,7 +672,7 @@ export function TourHelpButton() {
     width: isHovered ? 'auto' : '52px',
     height: '52px',
     borderRadius: isHovered ? '26px' : '50%',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
     border: 'none',
     cursor: 'pointer',
     display: 'flex',
