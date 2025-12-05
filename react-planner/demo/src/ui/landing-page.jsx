@@ -3,7 +3,7 @@ import Header, { AILogo } from './header';
 import { useSubscription } from './subscription';
 import { useAuth } from './auth-modals.jsx';
 
-const LandingPage = ({ onGetStarted, onShowAI }) => {
+const LandingPage = ({ onGetStarted, onShowAI, onShowGuide }) => {
   var auth = useAuth();
   var subscriptionContext = useSubscription();
   var createCheckoutSession = subscriptionContext.createCheckoutSession;
@@ -474,10 +474,11 @@ const LandingPage = ({ onGetStarted, onShowAI }) => {
       `}</style>
 
       {/* Navbar */}
-      <Header 
+      <Header
         onBackToHome={() => {}}
         onShowAI={onShowAI}
         onStartFromScratch={onGetStarted}
+        onShowGuide={onShowGuide}
         onScrollToFeatures={scrollToFeatures}
         currentPage="landing"
         isScrolled={isScrolled}

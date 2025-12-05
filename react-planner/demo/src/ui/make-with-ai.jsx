@@ -1,7 +1,7 @@
 import React from 'react';
 import Header, { AILogo } from './header';
 
-const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
+const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign, onShowGuide }) => {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [messages, setMessages] = React.useState([
     {
@@ -320,10 +320,11 @@ const MakeWithAI = ({ onBackToHome, onStartFromScratch, onLoadDesign }) => {
       `}</style>
 
       {/* Navbar */}
-      <Header 
+      <Header
         onBackToHome={onBackToHome}
         onShowAI={() => {}}
         onStartFromScratch={onStartFromScratch}
+        onShowGuide={onShowGuide}
         currentPage="ai"
         isScrolled={isScrolled}
         isFixed={true}

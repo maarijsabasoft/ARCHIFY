@@ -11,6 +11,7 @@ import MyCatalog from './catalog/mycatalog';
 import ToolbarScreenshotButton from './ui/toolbar-screenshot-button';
 import LandingPage from './ui/landing-page';
 import MakeWithAI from './ui/make-with-ai';
+import Guide from './ui/guide';
 import Header, { AILogo } from './ui/header';
 import { AuthProvider, LoginModal, SignupModal, VerificationModal, ForgotPasswordModal, ResetPasswordModal, UserMenu } from './ui/auth-modals.jsx';
 import { TourProvider, TourOverlay, WelcomeTourModal, TourHelpButton } from './ui/product-tour';
@@ -96,10 +97,12 @@ class App extends React.Component {
       initialView = 'pricing';
     } else if (path === '/account' || path.endsWith('/account')) {
       initialView = 'account';
+    } else if (path === '/guide' || path.endsWith('/guide')) {
+      initialView = 'guide';
     }
     
     this.state = {
-      currentView: initialView, // 'landing', 'ai', 'planner', 'tool', 'pricing', 'account'
+      currentView: initialView, // 'landing', 'ai', 'planner', 'tool', 'pricing', 'account', 'guide'
       aiGeneratedDesign: null
     };
     this.handleGetStarted = this.handleGetStarted.bind(this);
@@ -109,6 +112,7 @@ class App extends React.Component {
     this.handleLoadDesign = this.handleLoadDesign.bind(this);
     this.handleShowPricing = this.handleShowPricing.bind(this);
     this.handleShowAccount = this.handleShowAccount.bind(this);
+    this.handleShowGuide = this.handleShowGuide.bind(this);
   }
 
   componentDidMount() {
@@ -157,6 +161,8 @@ class App extends React.Component {
         this.setState({ currentView: 'pricing' });
       } else if (path === '/account' || path.endsWith('/account')) {
         this.setState({ currentView: 'account' });
+      } else if (path === '/guide' || path.endsWith('/guide')) {
+        this.setState({ currentView: 'guide' });
       } else {
         this.setState({ currentView: 'landing' });
       }
@@ -200,26 +206,33 @@ class App extends React.Component {
     this.setState({ currentView: 'account' });
   }
 
+  handleShowGuide() {
+    window.history.pushState({}, '', '/guide');
+    this.setState({ currentView: 'guide' });
+  }
+
   render() {
     if (this.state.currentView === 'landing') {
-      return <LandingPage onGetStarted={this.handleGetStarted} onShowAI={this.handleShowAI} />;
+      return <LandingPage onGetStarted={this.handleGetStarted} onShowAI={this.handleShowAI} onShowGuide={this.handleShowGuide} />;
     }
 
     if (this.state.currentView === 'ai') {
-      return <MakeWithAI 
-        onBackToHome={this.handleBackToHome} 
+      return <MakeWithAI
+        onBackToHome={this.handleBackToHome}
         onStartFromScratch={this.handleGetStarted}
         onLoadDesign={this.handleLoadDesign}
+        onShowGuide={this.handleShowGuide}
       />;
     }
 
     if (this.state.currentView === 'pricing') {
       return (
         <div>
-          <Header 
+          <Header
             onBackToHome={this.handleBackToHome}
             onShowAI={this.handleShowAI}
             onStartFromScratch={this.handleGetStarted}
+            onShowGuide={this.handleShowGuide}
             currentPage="pricing"
             isScrolled={true}
             isFixed={true}
@@ -234,10 +247,11 @@ class App extends React.Component {
     if (this.state.currentView === 'account') {
       return (
         <div>
-          <Header 
+          <Header
             onBackToHome={this.handleBackToHome}
             onShowAI={this.handleShowAI}
             onStartFromScratch={this.handleGetStarted}
+            onShowGuide={this.handleShowGuide}
             currentPage="account"
             isScrolled={true}
             isFixed={true}
@@ -247,6 +261,14 @@ class App extends React.Component {
           </div>
         </div>
       );
+    }
+
+    if (this.state.currentView === 'guide') {
+      return <Guide
+        onBackToHome={this.handleBackToHome}
+        onShowAI={this.handleShowAI}
+        onStartFromScratch={this.handleGetStarted}
+      />;
     }
 
     if (this.state.currentView === 'planner') {
@@ -424,10 +446,11 @@ class App extends React.Component {
           }
         `}</style>
         {/* Navbar */}
-        <Header 
+        <Header
           onBackToHome={this.handleBackToHome}
           onShowAI={this.handleShowAI}
           onStartFromScratch={this.handleOpenTool}
+          onShowGuide={this.handleShowGuide}
           currentPage="planner"
           isScrolled={false}
           isFixed={false}

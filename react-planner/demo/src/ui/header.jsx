@@ -29,12 +29,13 @@ export const AILogo = () => (
   </svg>
 );
 
-const Header = ({ 
-  onBackToHome, 
-  onShowAI, 
-  onStartFromScratch, 
+const Header = ({
+  onBackToHome,
+  onShowAI,
+  onStartFromScratch,
   onScrollToFeatures,
-  currentPage = 'landing', // 'landing', 'ai', 'planner', 'tool'
+  onShowGuide,
+  currentPage = 'landing', // 'landing', 'ai', 'planner', 'tool', 'guide'
   isScrolled = false,
   isFixed = false
 }) => {
@@ -119,9 +120,9 @@ const Header = ({
           </a>
 
           {/* Start from scratch Link */}
-          <a 
-            href="#" 
-            onClick={(e) => { e.preventDefault(); onStartFromScratch && onStartFromScratch(); }} 
+          <a
+            href="#"
+            onClick={(e) => { e.preventDefault(); onStartFromScratch && onStartFromScratch(); }}
             style={{
               color: textColor,
               textDecoration: 'none',
@@ -135,6 +136,25 @@ const Header = ({
             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >
             Start from scratch
+          </a>
+
+          {/* Guide Link */}
+          <a
+            href="#"
+            onClick={(e) => { e.preventDefault(); onShowGuide && onShowGuide(); }}
+            style={{
+              color: textColor,
+              textDecoration: 'none',
+              fontWeight: currentPage === 'guide' ? 'bold' : 500,
+              transition: 'color 0.3s ease',
+              cursor: 'pointer',
+              borderBottom: currentPage === 'guide' ? `2px solid ${textColor}` : 'none',
+              paddingBottom: currentPage === 'guide' ? '5px' : '0'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            Guide
           </a>
 
           {/* Features Link - only on landing page */}
