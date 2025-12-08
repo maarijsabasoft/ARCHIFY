@@ -1,0 +1,12 @@
+"""
+Archify AI Design Assistant - Refactored Version
+Clean, modular Flask application with proper separation of concerns
+"""
+
+from app import create_app
+
+# Create Flask application instance
+app = create_app()
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
